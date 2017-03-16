@@ -2,7 +2,7 @@ package tomby.scala.bricks
 
 import scala.collection.mutable.HashMap
 
-class Board(val height: Int, val width: Int, generator: ColorGenerator) {
+class Board(generator: ColorGenerator)(val height: Int, val width: Int) {
 
   private val tiles = Array.ofDim[Tile](height, width)
   private val bricks = new HashMap[Position, String]
@@ -146,7 +146,7 @@ object Board {
   def main(args: Array[String]) {
     println("Board")
     val generator = new DefaultColorGenerator(Array("R", "G", "B"))
-    val board = new Board(12, 10, generator)
+    val board = new Board(generator)(12, 10)
     println(board)
     for (i <- 11 to 0 by -1) {
       println("click " + i)
