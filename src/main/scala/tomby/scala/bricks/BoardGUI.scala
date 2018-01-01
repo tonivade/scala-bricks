@@ -18,7 +18,7 @@ import javafx.stage.Stage
 
 class BoardGUI extends Application {
 
-  private val board = new Board(new DefaultColorGenerator(Array("R", "G", "B", "Y")))(15, 10)
+  private val board: BoardDSL = new Board(new DefaultColorGenerator(Array("R", "G", "B", "Y")))(15, 10)
 
   override def start(primaryStage: Stage) = {
     primaryStage.setTitle("Click'em all!!")

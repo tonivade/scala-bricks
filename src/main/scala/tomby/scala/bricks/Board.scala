@@ -2,7 +2,14 @@ package tomby.scala.bricks
 
 import scala.collection.mutable.HashMap
 
-class Board(generator: ColorGenerator)(val height: Int, val width: Int) {
+trait BoardDSL {
+  val height: Int
+  val width: Int
+  def position(x: Int, y: Int) : Tile
+  def click(x: Int, y: Int): Boolean
+}
+
+class Board(generator: ColorGenerator)(val height: Int, val width: Int) extends BoardDSL {
 
   private val tiles = Array.ofDim[Tile](height, width)
   private val bricks = new HashMap[Position, String]
