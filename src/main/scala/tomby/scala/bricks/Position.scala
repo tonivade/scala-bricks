@@ -40,8 +40,8 @@ class Position(val x: Int, val y: Int) {
   
   override def equals(that: Any): Boolean = {
     that match {
-    	case other : Position => other != null && this.x == other.x && this.y == other.y
-    	case _ => false
+      case other : Position => other != null && this.x == other.x && this.y == other.y
+      case _ => false
     }
   }
 

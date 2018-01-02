@@ -1,8 +1,9 @@
 package tomby.scala.bricks
 
 import scala.collection.mutable.HashMap
+import scala.collection.mutable.MutableList
 
-trait BoardDSL {
+trait BoardDSL extends Iterable[Tile] {
   val height: Int
   val width: Int
   def position(x: Int, y: Int) : Tile
@@ -21,6 +22,16 @@ class Board(generator: ColorGenerator)(val height: Int, val width: Int) extends 
       tiles(i)(j) = new Tile(position, color)
       bricks += position -> color
     }
+  }
+  
+  def iterator: Iterator[Tile] = {
+    val list = new MutableList[Tile]()
+    for (i <- 0 until height) {
+      for (j <- 0 until width) {
+        list += tiles(i)(j)
+      }
+    }
+    list.iterator
   }
 
   def position(x: Int, y: Int): Tile = {

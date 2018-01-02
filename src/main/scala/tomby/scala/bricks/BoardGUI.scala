@@ -10,24 +10,28 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBoxBuilder
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.Stage
 
+import scala.collection.mutable.MutableList
+import javafx.scene.paint.Color
+
 class BoardGUI extends Application {
 
-  private val board: BoardDSL = new Board(new DefaultColorGenerator(Array("R", "G", "B", "Y")))(15, 10)
+  private val colors = Array("R", "G", "B", "Y")
+  private val board: BoardDSL = new Board(new DefaultColorGenerator(colors))(15, 10)
+  private val size = 20
 
   override def start(primaryStage: Stage) = {
     primaryStage.setTitle("Click'em all!!")
 
-    val size = 20
     val root = new Group
     val scene = new Scene(root, (board.width + 2) * size, (board.height + 2) * size, Color.WHITE)
 
-    paint(size, root)
+    root.getChildren.clear()
+    paint().foreach(root.getChildren().add(_))
 
     scene.setOnMouseClicked(
       new EventHandler[MouseEvent] {
@@ -38,7 +42,8 @@ class BoardGUI extends Application {
           if (board.click(x.intValue, y.intValue)) {
             gameover()
           }
-          paint(size, root)
+          root.getChildren.clear()
+          paint().foreach(root.getChildren().add(_))
         }
       })
 
@@ -77,20 +82,13 @@ class BoardGUI extends Application {
     }
   }
 
-  private def paint(size: Int, root: Group) {
-    root.getChildren().clear()
-
-    for (i <- 0 until board.height) {
-      for (j <- 0 until board.width) {
-        val r = new Rectangle
-        r.setX(size + (j * size))
-        r.setY(size + (i * size))
-        r.setHeight(size)
-        r.setWidth(size)
-        r.setFill(getColor(j, i))
-        root.getChildren().add(r)
-      }
-    }
+  private def paint(): Seq[Rectangle] = {
+    board.iterator.map(tile => {
+      val rectangle = new Rectangle(size, size, getColor(tile.position.x, tile.position.y))
+      rectangle.setX(size + (tile.position.x * size))
+      rectangle.setY(size + (tile.position.y * size))
+      rectangle
+    }).toSeq
   }
 }
 
