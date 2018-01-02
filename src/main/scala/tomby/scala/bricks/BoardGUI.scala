@@ -21,7 +21,8 @@ import javafx.scene.paint.Color
 class BoardGUI extends Application {
 
   private val colors = Array("R", "G", "B", "Y")
-  private val board: BoardDSL = new Board(15, 10)(new DefaultColorGenerator(colors))
+  private implicit val generator: Position => String = new ColorGenerator(colors).randomColor
+  private val board: BoardDSL = new Board(15, 10)(generator)
   private val size = 20
 
   override def start(primaryStage: Stage) = {

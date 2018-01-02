@@ -2,7 +2,7 @@ package tomby.scala.bricks
 
 case class Position(val x: Int, val y: Int) {
 
-  def neighbors = Array(up, down, right, left)
+  def neighbors = Set(up, down, right, left)
   
   def up: Position = {
     Position(x, y + 1)
