@@ -21,7 +21,7 @@ import javafx.scene.paint.Color
 class BoardGUI extends Application {
 
   private val colors = Array("R", "G", "B", "Y")
-  private val board: BoardDSL = new Board(new DefaultColorGenerator(colors))(15, 10)
+  private val board: BoardDSL = new Board(15, 10)(new DefaultColorGenerator(colors))
   private val size = 20
 
   override def start(primaryStage: Stage) = {
@@ -72,23 +72,28 @@ class BoardGUI extends Application {
     dialogStage.show();
   }
 
-  def getColor(x: Int, y: Int): Color = {
-    board.position(x, y).color match {
-      case "R" => Color.RED
-      case "G" => Color.GREEN
-      case "B" => Color.BLUE
-      case "Y" => Color.YELLOW
-      case _ => Color.WHITE
-    }
+  def getColor(position: Position): Color = {
+    board.atPosition(position.x, position.y).fold(Color.WHITE)(toColor)
+  }
+  
+  def toColor(tile: Tile): Color = {
+    tile.color match {
+        case "R" => Color.RED
+        case "G" => Color.GREEN
+        case "B" => Color.BLUE
+        case "Y" => Color.YELLOW
+      }
   }
 
   private def paint(): Seq[Rectangle] = {
-    board.iterator.map(tile => {
-      val rectangle = new Rectangle(size, size, getColor(tile.position.x, tile.position.y))
-      rectangle.setX(size + (tile.position.x * size))
-      rectangle.setY(size + (tile.position.y * size))
-      rectangle
-    }).toSeq
+    board.map(toRectangle).toSeq
+  }
+  
+  private def toRectangle(tile: Tile): Rectangle = {
+    val rectangle = new Rectangle(size, size, getColor(tile.position))
+    rectangle.setX(size + (tile.position.x * size))
+    rectangle.setY(size + (tile.position.y * size))
+    rectangle
   }
 }
 
