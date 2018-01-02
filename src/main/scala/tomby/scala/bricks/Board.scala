@@ -1,7 +1,6 @@
 package tomby.scala.bricks
 
 import scala.collection.mutable.HashMap
-import scala.collection.mutable.MutableList
 
 trait BoardDSL extends Iterable[Tile] {
   val height: Int
@@ -124,7 +123,7 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
     }
     result.append("\n")
 
-    for (y <- height-1 until -1 by -1) {
+    for (y <- height - 1 until -1 by -1) {
       if (y < 10) {
         result.append(" ")
       }
