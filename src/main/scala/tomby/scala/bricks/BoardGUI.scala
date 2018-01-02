@@ -14,15 +14,13 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.Stage
-
-import scala.collection.mutable.MutableList
 import javafx.scene.paint.Color
 
 class BoardGUI extends Application {
 
   private val colors = Array("R", "G", "B", "Y")
   private implicit val generator: Position => String = new ColorGenerator(colors).randomColor
-  private val board: BoardDSL = new Board(15, 10)(generator)
+  private val board: BoardDSL = new Board(15, 10)
   private val size = 20
 
   override def start(primaryStage: Stage) = {
@@ -39,8 +37,7 @@ class BoardGUI extends Application {
         override def handle(event: MouseEvent) {
           val x = (event.getSceneX() / size).intValue - 1
           val y = (event.getSceneY() / size).intValue - 1
-          println(x + ":" + y)
-          if (board.click(x.intValue, y.intValue)) {
+          if (board.click(x, y)) {
             gameover()
           }
           root.getChildren.clear()

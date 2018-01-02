@@ -33,11 +33,8 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   def click(x: Int, y: Int): Boolean = {
     val adjacentTiles = atPosition(x, y).map(visit(_, Set())).getOrElse(Set())
     clean(adjacentTiles)
-    println(s"clean\n$toString")
     fall() 
-    println(s"fall\n$toString")
     shift()
-    println(s"shift\n$toString")
     gameover()
   }
   
@@ -64,40 +61,41 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   private def fall() {
     for (y <- 1 until height) {
       for (x <- 0 until width) {
-        val tile = atPosition(x, y)
-        if (tile.isDefined) {
-          val _y = nextY(x, y)
-          if (_y.isDefined) {
-            move(tile.get, Position(x, _y.get))
-          }
-        }
+        for {
+          tile <- atPosition(x, y)
+          _y <- nextY(x, y)
+        } yield move(tile, Position(x, _y))
       }
     }
   }
 
   private def nextY(x: Int, y: Int): Option[Int] = {
-    for (_y <- y - 1 until 0) {
-      atPosition(x, y)
+    for (_y <- 0 until y) {
+      if (atPosition(x, _y).isEmpty) {
+        return Some(_y)
+      }
     }
-    Some(y - 1)
+    None
   }
     
   private def shift() {
     for (x <- 1 until width) {
       for (y <- 0 until height) {
-        val tile = atPosition(x, y)
-        if (tile.isDefined) {
-          val _x = nextX(x, y)
-          if (_x.isDefined) {
-            move(tile.get, Position(_x.get, y))
-          }
-        }
+        for {
+          tile <- atPosition(x, y)
+          _x <- nextX(x, y)
+        } yield move(tile, Position(_x, y))
       }
     }
   }
 
   private def nextX(x: Int, y: Int): Option[Int] = {
-    Some(x - 1)
+    for (_x <- 0 until x) {
+      if (atPosition(_x, y).isEmpty) {
+        return Some(_x)
+      }
+    }
+    None
   }
 
   private def move(tile: Tile, position: Position) {
