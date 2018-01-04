@@ -29,13 +29,9 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
 
   def click(x: Int, y: Int): Boolean = {
     val adjacentTiles = atPosition(x, y).map(visit(_, Set())).getOrElse(Set())
-    println(toString)
     clean(adjacentTiles)
-    println(toString)
     fall()
-    println(toString)
     shift()
-    println(toString)
     gameover()
   }
   
@@ -74,25 +70,32 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   private def nextY(col: Seq[Position], pos : Position) : Option[Int] = 
     col.filter(p => p.y < pos.y).find(p => atPosition(p.x, p.y).isEmpty).map(_.y)
     
-  private def shift() = {
-  }
+  private def shift() = 
+    for {
+      col <- cols()
+    } yield shiftCol(col)
+    
+  private def shiftCol(col: Seq[Position]) =
+    for {
+      _x <- nextX(col.head)
+    } yield moveCol(col, _x)
+    
+  private def nextX(pos: Position): Option[Int] = 
+    row(0).filter(p => p.x < pos.x).find(p => atPosition(p.x, p.y).isEmpty).map(_.x)
+    
+  private def moveCol(col: Seq[Position], x: Int) =
+    for {
+      pos <- col
+      tile <- atPosition(pos.x, pos.y)
+    } yield move(tile, Position(x, pos.y))
 
-  private def move(tile: Tile, position: Position) {
+  private def move(tile: Tile, position: Position) = {
     bricks -= tile.position
     bricks += position -> Tile(position, tile.color)
   }
 
-  private def gameover(): Boolean = {
-    for (current <- bricks.values) {
-      for (neighbor <- current.position.neighbors) {
-        val other = atPosition(neighbor.x, neighbor.y)
-        if (other.isDefined && current.adjacent(other.get)) {
-          return false
-        }
-      }
-    }
-    return true
-  }
+  def gameover(): Boolean = 
+    bricks.values.flatMap(search(_)).isEmpty
     
   def matrix() : Seq[Position] = 
     for {

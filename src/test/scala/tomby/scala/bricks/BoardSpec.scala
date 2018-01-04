@@ -13,6 +13,7 @@ class BoardSpec extends FlatSpec with Matchers {
     board.matrix().size should be (board.size)
     board.rows().size should be (board.height)
     board.cols().size should be (board.width)
+    board.gameover() should be (false)
   }
   
   "A Board" should "be empty when user win" in {
@@ -20,6 +21,7 @@ class BoardSpec extends FlatSpec with Matchers {
     
     board.click(0, 0) should be (true)
     board.isEmpty should be (true)
+    board.gameover() should be (true)
   }
   
   "A Board" should "fall down" in {
