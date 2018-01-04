@@ -13,9 +13,7 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
 
   private val bricks = new HashMap[Position, Tile]
 
-  for (x <- 0 until width) {
-    for (y <- 0 until height) {
-      val position = Position(x, y)
+  matrix().foreach { position => {
       val color = nextColor(position)
       bricks += position -> Tile(position, color)
     }
@@ -31,9 +29,13 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
 
   def click(x: Int, y: Int): Boolean = {
     val adjacentTiles = atPosition(x, y).map(visit(_, Set())).getOrElse(Set())
+    println(toString)
     clean(adjacentTiles)
-    fall() 
+    println(toString)
+    fall()
+    println(toString)
     shift()
+    println(toString)
     gameover()
   }
   
@@ -57,44 +59,22 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   private def clean(adjacentTiles: Set[Tile]) = 
     adjacentTiles.foreach(bricks -= _.position)
 
-  private def fall() {
-    for (y <- 1 until height) {
-      for (x <- 0 until width) {
-        for {
-          tile <- atPosition(x, y)
-          _y <- nextY(x, y)
-        } yield move(tile, Position(x, _y))
-      }
-    }
-  }
-
-  private def nextY(x: Int, y: Int): Option[Int] = {
-    for (_y <- 0 until y) {
-      if (atPosition(x, _y).isEmpty) {
-        return Some(_y)
-      }
-    }
-    None
-  }
+  private def fall() = 
+    for {
+      col <- cols()
+    } yield fallCol(col)
     
-  private def shift() {
-    for (x <- 1 until width) {
-      for (y <- 0 until height) {
-        for {
-          tile <- atPosition(x, y)
-          _x <- nextX(x, y)
-        } yield move(tile, Position(_x, y))
-      }
-    }
-  }
-
-  private def nextX(x: Int, y: Int): Option[Int] = {
-    for (_x <- 0 until x) {
-      if (atPosition(_x, y).isEmpty) {
-        return Some(_x)
-      }
-    }
-    None
+  private def fallCol(col: Seq[Position]) = 
+    for {
+      pos <- col
+      tile <- atPosition(pos.x, pos.y)
+      _y <- nextY(col, pos)
+    } yield move(tile, Position(pos.x, _y))
+  
+  private def nextY(col: Seq[Position], pos : Position) : Option[Int] = 
+    col.filter(p => p.y < pos.y).find(p => atPosition(p.x, p.y).isEmpty).map(_.y)
+    
+  private def shift() = {
   }
 
   private def move(tile: Tile, position: Position) {
@@ -113,6 +93,32 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
     }
     return true
   }
+    
+  def matrix() : Seq[Position] = 
+    for {
+      y <- 0 until height
+      x <- 0 until width
+    } yield Position(x, y)
+  
+  def rows() : Seq[Seq[Position]] =
+    for {
+      y <- 0 until height
+    } yield row(y)
+    
+  def row(y: Int) : Seq[Position] =
+    for {
+      x <- 0 until width
+    } yield Position(x, y)
+    
+  def cols(): Seq[Seq[Position]] =
+    for {
+      x <- 0 until width
+    } yield col(x)
+    
+  def col(x: Int) : Seq[Position] =
+    for {
+      y <- 0 until height
+    } yield Position(x, y)
 
   override def toString(): String = {
     val result = new StringBuilder
@@ -142,7 +148,7 @@ object Board {
   def main(args: Array[String]) {
     println("Board")
     implicit val nextColor: Position => String = new ColorGenerator(Array("R", "G", "B")).randomColor
-    val board = new Board(height = 5, width = 5)
-    println(board)
+    val board = new Board(height = 3, width = 3)
+    println(board.matrix())
   }
 }

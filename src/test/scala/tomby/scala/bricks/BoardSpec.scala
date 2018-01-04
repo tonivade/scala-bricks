@@ -10,6 +10,9 @@ class BoardSpec extends FlatSpec with Matchers {
     
     board.isEmpty should be (false)
     board.forall(_.color == "R") should be (true)
+    board.matrix().size should be (board.size)
+    board.rows().size should be (board.height)
+    board.cols().size should be (board.width)
   }
   
   "A Board" should "be empty when user win" in {
