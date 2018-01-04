@@ -2,11 +2,11 @@ package tomby.scala.bricks
 
 import scala.util.Random
 
-class DefaultColorGenerator(colors:Array[String]) extends ColorGenerator {
+class ColorGenerator(val colors:Array[String]) {
   
   private val random = new Random
   
-  override def nextColor: String = {
+  def randomColor(position: Position): String = {
     colors(random.nextInt(colors.length))
   }
 

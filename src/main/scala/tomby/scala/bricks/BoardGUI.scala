@@ -14,21 +14,23 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.Stage
-
-import scala.collection.mutable.MutableList
 import javafx.scene.paint.Color
 
 class BoardGUI extends Application {
 
   private val colors = Array("R", "G", "B", "Y")
-  private val board: BoardDSL = new Board(new DefaultColorGenerator(colors))(15, 10)
+  private implicit val generator: Position => String = new ColorGenerator(colors).randomColor
+  private val board: BoardDSL = new Board(15, 10)
   private val size = 20
+  private val height = board.height * size;
+  private val width = board.width * size;
+  private val padding = size * 2
 
   override def start(primaryStage: Stage) = {
     primaryStage.setTitle("Click'em all!!")
 
     val root = new Group
-    val scene = new Scene(root, (board.width + 2) * size, (board.height + 2) * size, Color.WHITE)
+    val scene = new Scene(root, width + padding, height + padding , Color.WHITE)
 
     root.getChildren.clear()
     paint().foreach(root.getChildren().add(_))
@@ -37,9 +39,8 @@ class BoardGUI extends Application {
       new EventHandler[MouseEvent] {
         override def handle(event: MouseEvent) {
           val x = (event.getSceneX() / size).intValue - 1
-          val y = (event.getSceneY() / size).intValue - 1
-          println(x + ":" + y)
-          if (board.click(x.intValue, y.intValue)) {
+          val y = board.height - (event.getSceneY() / size).intValue
+          if (board.click(x, y)) {
             gameover()
           }
           root.getChildren.clear()
@@ -72,23 +73,28 @@ class BoardGUI extends Application {
     dialogStage.show();
   }
 
-  def getColor(x: Int, y: Int): Color = {
-    board.position(x, y).color match {
+  def getColor(position: Position): Color = {
+    board.atPosition(position.x, position.y).fold(Color.WHITE)(toColor)
+  }
+  
+  def toColor(tile: Tile): Color = {
+    tile.color match {
       case "R" => Color.RED
       case "G" => Color.GREEN
       case "B" => Color.BLUE
       case "Y" => Color.YELLOW
-      case _ => Color.WHITE
     }
   }
 
   private def paint(): Seq[Rectangle] = {
-    board.iterator.map(tile => {
-      val rectangle = new Rectangle(size, size, getColor(tile.position.x, tile.position.y))
-      rectangle.setX(size + (tile.position.x * size))
-      rectangle.setY(size + (tile.position.y * size))
-      rectangle
-    }).toSeq
+    board.map(toRectangle).toSeq
+  }
+  
+  private def toRectangle(tile: Tile): Rectangle = {
+    val rectangle = new Rectangle(size, size, getColor(tile.position))
+    rectangle.setX(size + (tile.position.x * size))
+    rectangle.setY(height - (tile.position.y * size))
+    rectangle
   }
 }
 

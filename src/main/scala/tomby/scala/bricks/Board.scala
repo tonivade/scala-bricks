@@ -1,141 +1,127 @@
 package tomby.scala.bricks
 
 import scala.collection.mutable.HashMap
-import scala.collection.mutable.MutableList
 
 trait BoardDSL extends Iterable[Tile] {
   val height: Int
   val width: Int
-  def position(x: Int, y: Int) : Tile
+  def atPosition(x: Int, y: Int) : Option[Tile]
   def click(x: Int, y: Int): Boolean
 }
 
-class Board(generator: ColorGenerator)(val height: Int, val width: Int) extends BoardDSL {
+class Board(val height: Int, val width: Int)(implicit nextColor: Position => String) extends BoardDSL {
 
-  private val tiles = Array.ofDim[Tile](height, width)
-  private val bricks = new HashMap[Position, String]
+  private val bricks = new HashMap[Position, Tile]
 
-  for (i <- 0 until height) {
-    for (j <- 0 until width) {
-      val position = new Position(j, i)
-      val color = generator.nextColor
-      tiles(i)(j) = new Tile(position, color)
-      bricks += position -> color
+  matrix().foreach { position => {
+      val color = nextColor(position)
+      bricks += position -> Tile(position, color)
     }
   }
   
   def iterator: Iterator[Tile] = {
-    val list = new MutableList[Tile]()
-    for (i <- 0 until height) {
-      for (j <- 0 until width) {
-        list += tiles(i)(j)
-      }
-    }
-    list.iterator
+    bricks.values.iterator
   }
 
-  def position(x: Int, y: Int): Tile = {
-    if (y >= 0 && y < height && x >= 0 && x < width) {
-      tiles(y)(x)
-    } else {
-      null
-    }
+  def atPosition(x: Int, y: Int): Option[Tile] = {
+    bricks.get(Position(x, y))
   }
 
   def click(x: Int, y: Int): Boolean = {
-    val tile = position(x, y)
-    if (tile != null) {
-      search(tile)
-
-      clean(); fall(); shift()
-    }
+    val adjacentTiles = atPosition(x, y).map(visit(_, Set())).getOrElse(Set())
+    clean(adjacentTiles)
+    fall()
+    shift()
     gameover()
   }
-
-  private def search(current: Tile) {
-    if (current.navegable) {
-      for (neighbor <- current.position.neighbors) {
-        navegate(current, neighbor)
-      }
-    }
+  
+  private def visit(tile: Tile, visited: Set[Tile]): Set[Tile] = {
+    val tiles = search(tile)
+    val _visited = visited + tile
+    tiles ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, _visited))
   }
 
-  private def navegate(current: Tile, other: Position) {
-    val tile = position(other.x, other.y)
-    if (current.adjacent(tile, (t: Tile) => { t.mark = true; bricks -= t.position })) {
-      search(tile)
-    }
+  private def search(current: Tile): Set[Tile] = 
+    for {
+      adjacent <- neighbors(current).filter(current.adjacent(_))
+    } yield adjacent
+  
+  private def neighbors(current: Tile): Set[Tile] = 
+    for {
+      position <- current.position.neighbors
+      tile <- atPosition(position.x, position.y)
+    } yield tile
+
+  private def clean(adjacentTiles: Set[Tile]) = 
+    adjacentTiles.foreach(bricks -= _.position)
+
+  private def fall() = 
+    for {
+      col <- cols()
+    } yield fallCol(col)
+    
+  private def fallCol(col: Seq[Position]) = 
+    for {
+      pos <- col
+      tile <- atPosition(pos.x, pos.y)
+      _y <- nextY(col, pos)
+    } yield move(tile, Position(pos.x, _y))
+  
+  private def nextY(col: Seq[Position], pos : Position) : Option[Int] = 
+    col.filter(p => p.y < pos.y).find(p => atPosition(p.x, p.y).isEmpty).map(_.y)
+    
+  private def shift() = 
+    for {
+      col <- cols()
+    } yield shiftCol(col)
+    
+  private def shiftCol(col: Seq[Position]) =
+    for {
+      _x <- nextX(col.head)
+    } yield moveCol(col, _x)
+    
+  private def nextX(pos: Position): Option[Int] = 
+    row(0).filter(p => p.x < pos.x).find(p => atPosition(p.x, p.y).isEmpty).map(_.x)
+    
+  private def moveCol(col: Seq[Position], x: Int) =
+    for {
+      pos <- col
+      tile <- atPosition(pos.x, pos.y)
+    } yield move(tile, Position(x, pos.y))
+
+  private def move(tile: Tile, position: Position) = {
+    bricks -= tile.position
+    bricks += position -> Tile(position, tile.color)
   }
 
-  private def clean() {
-    for (x <- 0 until width) {
-      for (y <- 0 until height) {
-        position(x, y).clean()
-      }
-    }
-  }
-
-  private def fall() {
-    for (x <- 0 until width) {
-      for (y <- height - 1 to 1 by -1) {
-        if (position(x, y).empty) {
-          set(position(x, y), position(x, nextFall(x, y - 1)))
-        }
-      }
-    }
-  }
-
-  private def nextFall(x: Int, start: Int): Int = {
-    for (y <- start to 1 by -1) {
-      if (!position(x, y).empty) {
-        return y
-      }
-    }
-    return 0
-  }
-
-  private def shift() {
-    for (x <- 0 until width - 1) {
-      if (position(x, height - 1).empty) {
-        val next = nextShift(x + 1)
-        for (y <- 0 until height) {
-          set(position(x, y), position(next, y))
-        }
-      }
-    }
-  }
-
-  def nextShift(x: Int): Int = {
-    for (i <- x until width - 1) {
-      if (!position(i, height - 1).empty) {
-        return i
-      }
-    }
-    width - 1
-  }
-
-  private def set(a: Tile, b: Tile) {
-    a.color = b.color
-    bricks -= b.position
-    bricks += a.position -> a.color
-    b.color = null
-  }
-
-  private def gameover(): Boolean = {
-    for (i <- bricks.keySet) {
-      val current = position(i.x, i.y)
-      for (neighbor <- current.position.neighbors) {
-        if (adjacent(current, neighbor)) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  private def adjacent(current: Tile, other: Position): Boolean = {
-    current.adjacent(position(other.x, other.y), null)
-  }
+  def gameover(): Boolean = 
+    bricks.values.flatMap(search(_)).isEmpty
+    
+  def matrix() : Seq[Position] = 
+    for {
+      y <- 0 until height
+      x <- 0 until width
+    } yield Position(x, y)
+  
+  def rows() : Seq[Seq[Position]] =
+    for {
+      y <- 0 until height
+    } yield row(y)
+    
+  def row(y: Int) : Seq[Position] =
+    for {
+      x <- 0 until width
+    } yield Position(x, y)
+    
+  def cols(): Seq[Seq[Position]] =
+    for {
+      x <- 0 until width
+    } yield col(x)
+    
+  def col(x: Int) : Seq[Position] =
+    for {
+      y <- 0 until height
+    } yield Position(x, y)
 
   override def toString(): String = {
     val result = new StringBuilder
@@ -146,16 +132,17 @@ class Board(generator: ColorGenerator)(val height: Int, val width: Int) extends 
     }
     result.append("\n")
 
-    for (y <- 0 until height) {
+    for (y <- height - 1 until -1 by -1) {
       if (y < 10) {
         result.append(" ")
       }
       result.append(y)
       for (x <- 0 until width) {
-        result.append(position(x, y))
+        result.append(atPosition(x, y).fold(" ")(_.color))
       }
       result.append("\n")
     }
+
     result.toString
   }
 }
@@ -163,13 +150,8 @@ class Board(generator: ColorGenerator)(val height: Int, val width: Int) extends 
 object Board {
   def main(args: Array[String]) {
     println("Board")
-    val generator = new DefaultColorGenerator(Array("R", "G", "B"))
-    val board = new Board(generator)(12, 10)
-    println(board)
-    for (i <- 11 to 0 by -1) {
-      println("click " + i)
-      board.click(0, i)
-      println(board)
-    }
+    implicit val nextColor: Position => String = new ColorGenerator(Array("R", "G", "B")).randomColor
+    val board = new Board(height = 3, width = 3)
+    println(board.matrix())
   }
 }
