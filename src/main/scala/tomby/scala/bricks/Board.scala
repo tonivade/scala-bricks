@@ -21,13 +21,11 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
     }
   }
   
-  def iterator: Iterator[Tile] = {
-    bricks.values.iterator
-  }
+  def iterator: Iterator[Tile] = bricks.values.iterator
 
   def click(x: Int, y: Int) = {
-    val adjacentTiles = atPosition(Position(x, y)).map(visit(_, Set())).getOrElse(Set())
-    clean(adjacentTiles)
+    val adjacent = lookup(Position(x, y))
+    clean(adjacent)
     fall()
     shift()
   }
@@ -37,17 +35,19 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   def gameover(): Boolean = 
     bricks.values.flatMap(search(_)).isEmpty
   
-  private def atPosition(pos: Position): Option[Tile] = {
+  private def lookup(position: Position): Set[Position] =
+    atPosition(position).map(visit(_, Set())).getOrElse(Set())
+  
+  private def atPosition(pos: Position): Option[Tile] = 
     bricks.get(pos)
-  }
   
   private def isPresent(pos: Position): Boolean =
     atPosition(pos).isDefined
     
-  private def visit(tile: Tile, visited: Set[Tile]): Set[Tile] = {
+  private def visit(tile: Tile, visited: Set[Tile]): Set[Position] = {
     val tiles = search(tile)
     val _visited = visited + tile
-    tiles ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, _visited))
+    tiles.map(_.position) ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, _visited))
   }
 
   private def search(current: Tile): Set[Tile] = 
@@ -61,8 +61,8 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
       tile <- atPosition(pos)
     } yield tile
 
-  private def clean(adjacentTiles: Set[Tile]) = 
-    adjacentTiles.foreach(bricks -= _.position)
+  private def clean(positions: Set[Position]) = 
+    positions.foreach(bricks -= _)
 
   private def fall() = 
     for {
