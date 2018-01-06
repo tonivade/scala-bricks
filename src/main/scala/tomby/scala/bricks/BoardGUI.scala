@@ -9,15 +9,18 @@ import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
+import scalafx.scene.control.ButtonType
 
 object BoardGUI extends JFXApp {
 
-  private val board: BoardDSL = new Board(15, 10)(ColorGenerator.randomColor)
+  private val board: BoardDSL = new Board(15, 10)
   private val _size = 20
   private val _height = board.height * _size;
   private val _width = board.width * _size;
   private val _padding = _size * 2
   
+  board.shuffle(ColorGenerator.randomColor)
+
   private val pane = new Pane {
     children = paint()
   }
@@ -41,7 +44,18 @@ object BoardGUI extends JFXApp {
   }
 
   private def gameover() {
-    new Alert(AlertType.Information, "GAME OVER!").showAndWait()
+    val result = new Alert(AlertType.Confirmation, "GAME OVER!") {
+      initOwner(stage)
+      headerText = "GAME OVER!"
+      contentText = "Do you want to play again?"
+    }.showAndWait()
+    result match {
+      case Some(ButtonType.OK) => {
+        board.shuffle(ColorGenerator.randomColor)
+        pane.children = paint()
+      }
+      case _ => ()
+    }
   }
 
   private def win() {

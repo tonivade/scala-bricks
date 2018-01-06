@@ -5,20 +5,18 @@ import scala.collection.mutable.HashMap
 trait BoardDSL extends Iterable[Tile] {
   val height: Int
   val width: Int
+  def shuffle(nextColor: Position => Color)
   def click(x: Int, y: Int)
   def gameover(): Boolean
   def win(): Boolean
 }
 
-class Board(val height: Int, val width: Int)(nextColor: Position => Color) extends BoardDSL {
+class Board(val height: Int, val width: Int) extends BoardDSL {
 
   private val bricks = new HashMap[Position, Tile]
 
-  matrix().foreach { 
-    position => {
-      bricks += position -> Tile(position, nextColor(position))
-    }
-  }
+  def shuffle(nextColor: Position => Color) =
+    matrix().foreach(p => bricks += p -> Tile(p, nextColor(p)))
   
   def iterator: Iterator[Tile] = bricks.values.iterator
 

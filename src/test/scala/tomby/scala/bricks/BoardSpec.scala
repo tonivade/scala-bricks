@@ -6,7 +6,8 @@ import org.scalatest.Matchers
 class BoardSpec extends FlatSpec with Matchers {
   
   "A Board" should "be not empty at the beginning" in {
-    val board = new Board(3, 3)(_ => Red())
+    val board = new Board(3, 3)
+    board.shuffle(_ => Red())
     
     board.isEmpty should be (false)
     board.forall(_.color == Red()) should be (true)
@@ -18,7 +19,8 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Board" should "be empty when user win" in {
-    val board = new Board(3, 3)(_ => Red())
+    val board = new Board(3, 3)
+    board.shuffle(_ => Red())
 
     board.click(0, 0)
     
@@ -28,7 +30,8 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Board" should "fall down" in {
-    val board = new Board(3, 3)(pos => if (pos.y == 0) Red() else Yellow())
+    val board = new Board(3, 3)
+    board.shuffle(pos => if (pos.y == 0) Red() else Yellow())
     
     board.click(2, 0)
 
@@ -39,7 +42,8 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Board" should "fall down two rows" in {
-    val board = new Board(3, 3)(pos => if (pos.y < 2) Red() else Yellow())
+    val board = new Board(3, 3)
+    board.shuffle(pos => if (pos.y < 2) Red() else Yellow())
     
     board.click(2, 0)
 
@@ -50,7 +54,8 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Board" should "shift left" in {
-    val board = new Board(3, 3)(pos => if (pos.x == 0) Red() else Yellow())
+    val board = new Board(3, 3)
+    board.shuffle(pos => if (pos.x == 0) Red() else Yellow())
     
     board.click(0, 0)
 
@@ -61,7 +66,8 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Board" should "shift left two collums" in {
-    val board = new Board(3, 3)(pos => if (pos.x < 2) Red() else Yellow())
+    val board = new Board(3, 3)
+    board.shuffle(pos => if (pos.x < 2) Red() else Yellow())
     
     board.click(0, 0)
 
