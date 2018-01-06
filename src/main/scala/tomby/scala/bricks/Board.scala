@@ -16,16 +16,14 @@ class Board(val height: Int, val width: Int)(nextColor: Position => Color) exten
 
   matrix().foreach { 
     position => {
-      val color = nextColor(position)
-      bricks += position -> Tile(position, color)
+      bricks += position -> Tile(position, nextColor(position))
     }
   }
   
   def iterator: Iterator[Tile] = bricks.values.iterator
 
   def click(x: Int, y: Int) = {
-    val adjacent = lookup(Position(x, y))
-    clean(adjacent)
+    lookup(Position(x, y)).foreach(clean)
     fall()
     shift()
   }
@@ -46,8 +44,7 @@ class Board(val height: Int, val width: Int)(nextColor: Position => Color) exten
     
   private def visit(tile: Tile, visited: Set[Tile]): Set[Position] = {
     val tiles = search(tile)
-    val _visited = visited + tile
-    tiles.map(_.position) ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, _visited))
+    tiles.map(_.position) ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, visited + tile))
   }
 
   private def search(current: Tile): Set[Tile] = 
@@ -61,42 +58,41 @@ class Board(val height: Int, val width: Int)(nextColor: Position => Color) exten
       tile <- atPosition(pos)
     } yield tile
 
-  private def clean(positions: Set[Position]) = 
-    positions.foreach(bricks -= _)
+  private def clean(position: Position) = bricks -= position
 
   private def fall() = 
     for {
-      col <- cols()
-    } yield fallCol(col)
+      column <- columns()
+    } yield fallCol(column)
     
-  private def fallCol(col: Seq[Position]) = 
+  private def fallCol(column: Seq[Position]) = 
     for {
-      pos <- col
-      tile <- atPosition(pos)
-      _y <- nextY(col, pos)
-    } yield move(tile, Position(pos.x, _y))
+      position <- column
+      tile <- atPosition(position)
+      _y <- nextY(column, position)
+    } yield move(tile, Position(position.x, _y))
   
-  private def nextY(col: Seq[Position], pos : Position) : Option[Int] = 
-    col.takeWhile(_.y < pos.y).find(!isPresent(_)).map(_.y)
+  private def nextY(column: Seq[Position], position : Position) : Option[Int] = 
+    column.takeWhile(_.y < position.y).find(!isPresent(_)).map(_.y)
     
   private def shift() = 
     for {
-      col <- cols()
-    } yield shiftCol(col)
+      column <- columns()
+    } yield shiftColumn(column)
     
-  private def shiftCol(col: Seq[Position]) =
+  private def shiftColumn(column: Seq[Position]) =
     for {
-      _x <- nextX(col.head)
-    } yield moveCol(col, _x)
+      _x <- nextX(column.head)
+    } yield moveColumn(column, _x)
     
   private def nextX(pos: Position): Option[Int] = 
     row(0).takeWhile(_.x < pos.x).find(!isPresent(_)).map(_.x)
     
-  private def moveCol(col: Seq[Position], x: Int) =
+  private def moveColumn(column: Seq[Position], x: Int) =
     for {
-      pos <- col
-      tile <- atPosition(pos)
-    } yield move(tile, Position(x, pos.y))
+      position <- column
+      tile <- atPosition(position)
+    } yield move(tile, Position(x, position.y))
 
   private def move(tile: Tile, position: Position) = {
     bricks -= tile.position
@@ -119,12 +115,12 @@ class Board(val height: Int, val width: Int)(nextColor: Position => Color) exten
       x <- 0 until width
     } yield Position(x, y)
     
-  def cols(): Seq[Seq[Position]] =
+  def columns(): Seq[Seq[Position]] =
     for {
       x <- 0 until width
-    } yield col(x)
+    } yield column(x)
     
-  def col(x: Int) : Seq[Position] =
+  def column(x: Int) : Seq[Position] =
     for {
       y <- 0 until height
     } yield Position(x, y)

@@ -12,7 +12,7 @@ class BoardSpec extends FlatSpec with Matchers {
     board.forall(_.color == Red()) should be (true)
     board.matrix().size should be (board.size)
     board.rows().size should be (board.height)
-    board.cols().size should be (board.width)
+    board.columns().size should be (board.width)
     board.gameover() should be (false)
     board.win() should be (false)
   }
