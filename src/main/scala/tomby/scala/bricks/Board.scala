@@ -5,15 +5,17 @@ import scala.collection.mutable.HashMap
 trait BoardDSL extends Iterable[Tile] {
   val height: Int
   val width: Int
-  def atPosition(x: Int, y: Int) : Option[Tile]
-  def click(x: Int, y: Int): Boolean
+  def click(x: Int, y: Int)
+  def gameover(): Boolean
+  def win(): Boolean
 }
 
 class Board(val height: Int, val width: Int)(implicit nextColor: Position => String) extends BoardDSL {
 
   private val bricks = new HashMap[Position, Tile]
 
-  matrix().foreach { position => {
+  matrix().foreach { 
+    position => {
       val color = nextColor(position)
       bricks += position -> Tile(position, color)
     }
@@ -23,18 +25,25 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
     bricks.values.iterator
   }
 
-  def atPosition(x: Int, y: Int): Option[Tile] = {
-    bricks.get(Position(x, y))
-  }
-
-  def click(x: Int, y: Int): Boolean = {
-    val adjacentTiles = atPosition(x, y).map(visit(_, Set())).getOrElse(Set())
+  def click(x: Int, y: Int) = {
+    val adjacentTiles = atPosition(Position(x, y)).map(visit(_, Set())).getOrElse(Set())
     clean(adjacentTiles)
     fall()
     shift()
-    gameover()
   }
   
+  def win(): Boolean = bricks.isEmpty
+
+  def gameover(): Boolean = 
+    bricks.values.flatMap(search(_)).isEmpty
+  
+  private def atPosition(pos: Position): Option[Tile] = {
+    bricks.get(pos)
+  }
+  
+  private def isPresent(pos: Position): Boolean =
+    atPosition(pos).isDefined
+    
   private def visit(tile: Tile, visited: Set[Tile]): Set[Tile] = {
     val tiles = search(tile)
     val _visited = visited + tile
@@ -48,8 +57,8 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   
   private def neighbors(current: Tile): Set[Tile] = 
     for {
-      position <- current.position.neighbors
-      tile <- atPosition(position.x, position.y)
+      pos <- current.position.neighbors
+      tile <- atPosition(pos)
     } yield tile
 
   private def clean(adjacentTiles: Set[Tile]) = 
@@ -63,12 +72,12 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
   private def fallCol(col: Seq[Position]) = 
     for {
       pos <- col
-      tile <- atPosition(pos.x, pos.y)
+      tile <- atPosition(pos)
       _y <- nextY(col, pos)
     } yield move(tile, Position(pos.x, _y))
   
   private def nextY(col: Seq[Position], pos : Position) : Option[Int] = 
-    col.filter(p => p.y < pos.y).find(p => atPosition(p.x, p.y).isEmpty).map(_.y)
+    col.takeWhile(_.y < pos.y).find(!isPresent(_)).map(_.y)
     
   private def shift() = 
     for {
@@ -81,21 +90,18 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
     } yield moveCol(col, _x)
     
   private def nextX(pos: Position): Option[Int] = 
-    row(0).filter(p => p.x < pos.x).find(p => atPosition(p.x, p.y).isEmpty).map(_.x)
+    row(0).takeWhile(_.x < pos.x).find(!isPresent(_)).map(_.x)
     
   private def moveCol(col: Seq[Position], x: Int) =
     for {
       pos <- col
-      tile <- atPosition(pos.x, pos.y)
+      tile <- atPosition(pos)
     } yield move(tile, Position(x, pos.y))
 
   private def move(tile: Tile, position: Position) = {
     bricks -= tile.position
     bricks += position -> Tile(position, tile.color)
   }
-
-  def gameover(): Boolean = 
-    bricks.values.flatMap(search(_)).isEmpty
     
   def matrix() : Seq[Position] = 
     for {
@@ -138,7 +144,7 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
       }
       result.append(y)
       for (x <- 0 until width) {
-        result.append(atPosition(x, y).fold(" ")(_.color))
+        result.append(atPosition(Position(x, y)).fold(" ")(_.color))
       }
       result.append("\n")
     }

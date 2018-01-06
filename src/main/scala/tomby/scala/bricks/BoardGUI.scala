@@ -28,10 +28,9 @@ object BoardGUI extends JFXApp {
     event: MouseEvent => {
       val _x = (event.getSceneX / _size).toInt - 1
       val _y = board.height - (event.getSceneY / _size).toInt
-      if (board.click(_x, _y)) {
-        gameover()
-      }
+      board.click(_x, _y)
       pane.children = paint()
+      if (board.gameover()) if (board.win()) win() else gameover()
     }
   }
   
@@ -43,11 +42,15 @@ object BoardGUI extends JFXApp {
     }
   }
 
-  def gameover() {
+  private def gameover() {
     new Alert(AlertType.Information, "GAME OVER!").showAndWait()
   }
+
+  private def win() {
+    new Alert(AlertType.Information, "YOU WIN!").showAndWait()
+  }
   
-  def toColor(tile: Tile): Color = {
+  private def toColor(tile: Tile): Color = {
     tile.color match {
       case "R" => Color.Red
       case "G" => Color.Green
