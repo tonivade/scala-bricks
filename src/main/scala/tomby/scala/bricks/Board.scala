@@ -10,7 +10,7 @@ trait BoardDSL extends Iterable[Tile] {
   def win(): Boolean
 }
 
-class Board(val height: Int, val width: Int)(implicit nextColor: Position => String) extends BoardDSL {
+class Board(val height: Int, val width: Int)(nextColor: Position => Color) extends BoardDSL {
 
   private val bricks = new HashMap[Position, Tile]
 
@@ -144,20 +144,20 @@ class Board(val height: Int, val width: Int)(implicit nextColor: Position => Str
       }
       result.append(y)
       for (x <- 0 until width) {
-        result.append(atPosition(Position(x, y)).fold(" ")(_.color))
+        result.append(atPosition(Position(x, y)).fold(" ") {
+          tile => {
+            tile.color match {
+              case Red() => "R"
+              case Blue() => "B"
+              case Yellow() => "Y"
+              case Green() => "G"
+            }
+          }
+        })
       }
       result.append("\n")
     }
 
     result.toString
-  }
-}
-
-object Board {
-  def main(args: Array[String]) {
-    println("Board")
-    implicit val nextColor: Position => String = new ColorGenerator(Array("R", "G", "B")).randomColor
-    val board = new Board(height = 3, width = 3)
-    println(board.matrix())
   }
 }

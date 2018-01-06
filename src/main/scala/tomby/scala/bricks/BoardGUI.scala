@@ -3,7 +3,7 @@ package tomby.scala.bricks
 import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
-import scalafx.scene.paint.Color
+import scalafx.scene.paint.{Color => FxColor}
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
@@ -12,9 +12,7 @@ import scalafx.scene.input.MouseEvent
 
 object BoardGUI extends JFXApp {
 
-  private val colors = Array("R", "G", "B", "Y")
-  private implicit val generator: Position => String = new ColorGenerator(colors).randomColor
-  private val board: BoardDSL = new Board(15, 10)
+  private val board: BoardDSL = new Board(15, 10)(ColorGenerator.randomColor)
   private val _size = 20
   private val _height = board.height * _size;
   private val _width = board.width * _size;
@@ -37,7 +35,7 @@ object BoardGUI extends JFXApp {
   stage = new JFXApp.PrimaryStage {
     title.value = "Click'em all!!"
     scene = new Scene(_width + _padding, _height + _padding) {
-      fill = Color.White
+      fill = FxColor.White
       root = pane
     }
   }
@@ -50,12 +48,12 @@ object BoardGUI extends JFXApp {
     new Alert(AlertType.Information, "YOU WIN!").showAndWait()
   }
   
-  private def toColor(tile: Tile): Color = {
+  private def toColor(tile: Tile): FxColor = {
     tile.color match {
-      case "R" => Color.Red
-      case "G" => Color.Green
-      case "B" => Color.Blue
-      case "Y" => Color.Yellow
+      case Red() => FxColor.Red
+      case Green() => FxColor.Green
+      case Blue() => FxColor.Blue
+      case Yellow() => FxColor.Yellow
     }
   }
 
