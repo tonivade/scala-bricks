@@ -15,8 +15,8 @@ object BoardGUI extends JFXApp {
 
   private val board: BoardDSL = new Board(15, 10)
   private val _size = 20
-  private val _height = board.height * _size;
-  private val _width = board.width * _size;
+  private val _height = board.height * _size
+  private val _width = board.width * _size
   private val _padding = _size * 2
   
   board.shuffle(ColorGenerator.randomColor)
