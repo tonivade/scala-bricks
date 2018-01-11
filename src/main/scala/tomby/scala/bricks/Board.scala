@@ -3,8 +3,8 @@ package tomby.scala.bricks
 import scala.collection.mutable.HashMap
 
 trait Board extends Iterable[Tile] {
+	val width: Int
   val height: Int
-  val width: Int
   def shuffle(nextColor: Position => Color): Board
   def click(x: Int, y: Int): Board
   def gameover(): Boolean
@@ -21,13 +21,13 @@ private class InmutableBoard(val width: Int, val height: Int, val tiles: Seq[Til
   private val bricks = Map(tiles.map(tile => tile.position -> tile): _*)
 
   def shuffle(nextColor: Position => Color): Board =
-    new InmutableBoard(height, width, matrix().map(p => Tile(p, nextColor(p))))
+    new InmutableBoard(width, height, matrix().map(p => Tile(p, nextColor(p))))
   
   def iterator: Iterator[Tile] = bricks.values.iterator
 
   def click(x: Int, y: Int): Board = {
     val _bricks = bricks -- lookup(Position(x, y))
-    val _board = new MutableBoard(height, width, _bricks.values.toSeq)
+    val _board = new MutableBoard(width, height, _bricks.values.toSeq)
     _board.fall()
     _board.shift()
     _board.toBoard()
@@ -102,7 +102,7 @@ private class InmutableBoard(val width: Int, val height: Int, val tiles: Seq[Til
   }
 }
 
-private class MutableBoard(val height: Int, val width: Int, tiles: Seq[Tile] = Seq()) {
+private class MutableBoard(val width: Int, val height: Int, tiles: Seq[Tile] = Seq()) {
   private val bricks = HashMap(tiles.map(tile => tile.position -> tile): _*)
 
   def fall() = 
@@ -115,7 +115,7 @@ private class MutableBoard(val height: Int, val width: Int, tiles: Seq[Tile] = S
       column <- columns()
     } yield shiftColumn(column)
     
-  def toBoard(): Board = new InmutableBoard(height, width, bricks.values.toSeq)
+  def toBoard(): Board = new InmutableBoard(width, height, bricks.values.toSeq)
     
   private def fallCol(column: Seq[Position]) =
     for {
