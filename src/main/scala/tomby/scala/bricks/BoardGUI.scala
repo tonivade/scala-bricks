@@ -70,7 +70,7 @@ object BoardGUI extends JFXApp {
   }
 
   private def paint(): Seq[Rectangle] = 
-    board.map(toRectangle).toSeq
+    board.tiles.map(toRectangle).toSeq
   
   private def toRectangle(tile: Tile): Rectangle = 
     new Rectangle {

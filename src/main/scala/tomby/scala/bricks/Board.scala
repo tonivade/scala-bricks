@@ -1,10 +1,9 @@
 package tomby.scala.bricks
 
-import scala.collection.mutable.HashMap
-
-trait Board extends Iterable[Tile] {
-	val width: Int
+trait Board {
+  val width: Int
   val height: Int
+  val tiles: Seq[Tile]
   def shuffle(nextColor: Position => Color): Board
   def click(x: Int, y: Int): Board
   def gameover(): Boolean
@@ -103,6 +102,8 @@ private class InmutableBoard(val width: Int, val height: Int, val tiles: Seq[Til
 }
 
 private class MutableBoard(val width: Int, val height: Int, tiles: Seq[Tile] = Seq()) {
+  import scala.collection.mutable.HashMap
+  
   private val bricks = HashMap(tiles.map(tile => tile.position -> tile): _*)
 
   def fall() = 

@@ -8,8 +8,8 @@ class BoardSpec extends FlatSpec with Matchers {
   "A Board" should "be not empty at the beginning" in {
     val board = Board(3, 3).shuffle(_ => Red)
     
-    board.isEmpty should be (false)
-    board.forall(_.color == Red) should be (true)
+    board.tiles.isEmpty should be (false)
+    board.tiles.forall(_.color == Red) should be (true)
     board.gameover() should be (false)
     board.win() should be (false)
   }
@@ -19,7 +19,7 @@ class BoardSpec extends FlatSpec with Matchers {
 
     val _board = board.click(0, 0)
     
-    _board.isEmpty should be (true)
+    _board.tiles.isEmpty should be (true)
     _board.gameover() should be (true)
     _board.win() should be (true)
   }
@@ -29,10 +29,10 @@ class BoardSpec extends FlatSpec with Matchers {
     
     val _board = board.click(2, 0)
 
-    _board.isEmpty should be (false)
+    _board.tiles.isEmpty should be (false)
     _board.gameover() should be (false)
-    _board.filter(_.position.y == 2).isEmpty should be(true)
-    _board.filter(_.position.y != 2).forall(_.color == Yellow) should be(true)
+    _board.tiles.filter(_.position.y == 2).isEmpty should be(true)
+    _board.tiles.filter(_.position.y != 2).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "fall down two rows" in {
@@ -40,10 +40,10 @@ class BoardSpec extends FlatSpec with Matchers {
     
     val _board = board.click(2, 0)
 
-    _board.isEmpty should be (false)
+    _board.tiles.isEmpty should be (false)
     _board.gameover() should be (false)
-    _board.filter(_.position.y > 0).isEmpty should be(true)
-    _board.filter(_.position.y == 0).forall(_.color == Yellow) should be(true)
+    _board.tiles.filter(_.position.y > 0).isEmpty should be(true)
+    _board.tiles.filter(_.position.y == 0).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "shift left" in {
@@ -51,10 +51,10 @@ class BoardSpec extends FlatSpec with Matchers {
     
     val _board = board.click(0, 0)
 
-    _board.isEmpty should be (false)
+    _board.tiles.isEmpty should be (false)
     _board.gameover() should be (false)
-    _board.filter(_.position.x == 2).isEmpty should be(true)
-    _board.filter(_.position.x != 2).forall(_.color == Yellow) should be(true)
+    _board.tiles.filter(_.position.x == 2).isEmpty should be(true)
+    _board.tiles.filter(_.position.x != 2).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "shift left two collums" in {
@@ -62,9 +62,9 @@ class BoardSpec extends FlatSpec with Matchers {
     
     val _board = board.click(0, 0)
 
-    _board.isEmpty should be (false)
+    _board.tiles.isEmpty should be (false)
     _board.gameover() should be (false)
-    _board.filter(_.position.x > 0).isEmpty should be(true)
-    _board.filter(_.position.x == 0).forall(_.color == Yellow) should be(true)
+    _board.tiles.filter(_.position.x > 0).isEmpty should be(true)
+    _board.tiles.filter(_.position.x == 0).forall(_.color == Yellow) should be(true)
   }
 }
