@@ -49,7 +49,7 @@ object BoardGUI extends JFXApp {
     }.showAndWait()
     result match {
       case Some(ButtonType.OK) => {
-        board.shuffle(ColorGenerator.randomColor)
+        board = board.shuffle(ColorGenerator.randomColor)
         pane.children = paint()
       }
       case _ => ()

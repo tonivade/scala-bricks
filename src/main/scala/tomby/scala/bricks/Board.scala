@@ -16,7 +16,7 @@ object Board {
     new InmutableBoard(width, height)
 }
 
-class InmutableBoard(val width: Int, val height: Int, val tiles: Seq[Tile] = Seq()) extends Board {
+private class InmutableBoard(val width: Int, val height: Int, val tiles: Seq[Tile] = Seq()) extends Board {
 
   private val bricks = Map(tiles.map(tile => tile.position -> tile): _*)
 
