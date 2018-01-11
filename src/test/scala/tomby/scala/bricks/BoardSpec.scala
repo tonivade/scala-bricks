@@ -6,74 +6,65 @@ import org.scalatest.Matchers
 class BoardSpec extends FlatSpec with Matchers {
   
   "A Board" should "be not empty at the beginning" in {
-    val board = new Board(3, 3)
-    board.shuffle(_ => Red())
+    val board = Board(3, 3).shuffle(_ => Red)
     
     board.isEmpty should be (false)
-    board.forall(_.color == Red()) should be (true)
-    board.matrix().size should be (board.size)
-    board.rows().size should be (board.height)
-    board.columns().size should be (board.width)
+    board.forall(_.color == Red) should be (true)
     board.gameover() should be (false)
     board.win() should be (false)
   }
   
   "A Board" should "be empty when user win" in {
-    val board = new Board(3, 3)
-    board.shuffle(_ => Red())
+    val board = Board(3, 3).shuffle(_ => Red)
 
-    board.click(0, 0)
+    val _board = board.click(0, 0)
     
-    board.isEmpty should be (true)
-    board.gameover() should be (true)
-    board.win() should be (true)
+    _board.isEmpty should be (true)
+    _board.gameover() should be (true)
+    _board.win() should be (true)
   }
   
   "A Board" should "fall down" in {
-    val board = new Board(3, 3)
-    board.shuffle(pos => if (pos.y == 0) Red() else Yellow())
+    val board = Board(3, 3).shuffle(pos => if (pos.y == 0) Red else Yellow)
     
-    board.click(2, 0)
+    val _board = board.click(2, 0)
 
-    board.isEmpty should be (false)
-    board.gameover() should be (false)
-    board.filter(_.position.y == 2).isEmpty should be(true)
-    board.filter(_.position.y != 2).forall(_.color == Yellow()) should be(true)
+    _board.isEmpty should be (false)
+    _board.gameover() should be (false)
+    _board.filter(_.position.y == 2).isEmpty should be(true)
+    _board.filter(_.position.y != 2).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "fall down two rows" in {
-    val board = new Board(3, 3)
-    board.shuffle(pos => if (pos.y < 2) Red() else Yellow())
+    val board = Board(3, 3).shuffle(pos => if (pos.y < 2) Red else Yellow)
     
-    board.click(2, 0)
+    val _board = board.click(2, 0)
 
-    board.isEmpty should be (false)
-    board.gameover() should be (false)
-    board.filter(_.position.y > 0).isEmpty should be(true)
-    board.filter(_.position.y == 0).forall(_.color == Yellow()) should be(true)
+    _board.isEmpty should be (false)
+    _board.gameover() should be (false)
+    _board.filter(_.position.y > 0).isEmpty should be(true)
+    _board.filter(_.position.y == 0).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "shift left" in {
-    val board = new Board(3, 3)
-    board.shuffle(pos => if (pos.x == 0) Red() else Yellow())
+    val board = Board(3, 3).shuffle(pos => if (pos.x == 0) Red else Yellow)
     
-    board.click(0, 0)
+    val _board = board.click(0, 0)
 
-    board.isEmpty should be (false)
-    board.gameover() should be (false)
-    board.filter(_.position.x == 2).isEmpty should be(true)
-    board.filter(_.position.x != 2).forall(_.color == Yellow()) should be(true)
+    _board.isEmpty should be (false)
+    _board.gameover() should be (false)
+    _board.filter(_.position.x == 2).isEmpty should be(true)
+    _board.filter(_.position.x != 2).forall(_.color == Yellow) should be(true)
   }
   
   "A Board" should "shift left two collums" in {
-    val board = new Board(3, 3)
-    board.shuffle(pos => if (pos.x < 2) Red() else Yellow())
+    val board = Board(3, 3).shuffle(pos => if (pos.x < 2) Red else Yellow)
     
-    board.click(0, 0)
+    val _board = board.click(0, 0)
 
-    board.isEmpty should be (false)
-    board.gameover() should be (false)
-    board.filter(_.position.x > 0).isEmpty should be(true)
-    board.filter(_.position.x == 0).forall(_.color == Yellow()) should be(true)
+    _board.isEmpty should be (false)
+    _board.gameover() should be (false)
+    _board.filter(_.position.x > 0).isEmpty should be(true)
+    _board.filter(_.position.x == 0).forall(_.color == Yellow) should be(true)
   }
 }

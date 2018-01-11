@@ -1,6 +1,6 @@
 package tomby.scala.bricks
 
-case class Position(val x: Int, val y: Int) {
+case class Position(x: Int, y: Int) {
 
   def neighbors = Set(up, down, right, left)
   

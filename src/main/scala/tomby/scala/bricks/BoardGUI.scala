@@ -13,14 +13,12 @@ import scalafx.scene.control.ButtonType
 
 object BoardGUI extends JFXApp {
 
-  private val board: BoardDSL = new Board(15, 10)
+  private var board: Board = Board(10, 15).shuffle(ColorGenerator.randomColor)
   private val _size = 20
   private val _height = board.height * _size
   private val _width = board.width * _size
   private val _padding = _size * 2
   
-  board.shuffle(ColorGenerator.randomColor)
-
   private val pane = new Pane {
     children = paint()
   }
@@ -29,7 +27,7 @@ object BoardGUI extends JFXApp {
     event: MouseEvent => {
       val _x = (event.getSceneX / _size).toInt - 1
       val _y = board.height - (event.getSceneY / _size).toInt
-      board.click(_x, _y)
+      board = board.click(_x, _y)
       pane.children = paint()
       if (board.gameover()) if (board.win()) win() else gameover()
     }
@@ -64,18 +62,17 @@ object BoardGUI extends JFXApp {
   
   private def toColor(tile: Tile): FxColor = {
     tile.color match {
-      case Red() => FxColor.Red
-      case Green() => FxColor.Green
-      case Blue() => FxColor.Blue
-      case Yellow() => FxColor.Yellow
+      case Red => FxColor.Red
+      case Green => FxColor.Green
+      case Blue => FxColor.Blue
+      case Yellow => FxColor.Yellow
     }
   }
 
-  private def paint(): Seq[Rectangle] = {
+  private def paint(): Seq[Rectangle] = 
     board.map(toRectangle).toSeq
-  }
   
-  private def toRectangle(tile: Tile): Rectangle = {
+  private def toRectangle(tile: Tile): Rectangle = 
     new Rectangle {
       x = _size + (tile.position.x * _size)
       y = _height - (tile.position.y * _size)
@@ -83,5 +80,4 @@ object BoardGUI extends JFXApp {
       height = _size
       fill = toColor(tile)
     }
-  }
 }
