@@ -13,7 +13,7 @@ import scalafx.scene.control.ButtonType
 
 import tomby.scala.bricks.MatrixOps._
 
-object BoardGUI extends JFXApp {
+object ClickEmAll extends JFXApp {
 
   private var matrix: Matrix = Matrix(10, 15).shuffle(ColorGenerator.randomColor)
   private val _size = 20

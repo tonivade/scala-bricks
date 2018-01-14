@@ -4,7 +4,6 @@ import scala.annotation.tailrec
 
 object MatrixOps {
   import cats.data.State
-  import MatrixOps._
   
   def click(matrix: Matrix, pos: Position) = {
     val program = for {
