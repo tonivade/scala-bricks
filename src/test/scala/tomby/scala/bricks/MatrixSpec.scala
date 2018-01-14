@@ -5,7 +5,7 @@ import org.scalatest.Matchers
 
 import tomby.scala.bricks.MatrixOps._
 
-class BoardSpec extends FlatSpec with Matchers {
+class MatrixSpec extends FlatSpec with Matchers {
   
   "A Matrix" should "be empty at the beginning" in {
     val matrix = Matrix(3, 3)
@@ -16,16 +16,7 @@ class BoardSpec extends FlatSpec with Matchers {
   }
   
   "A Matrix" should "be not empty when shuffle" in {
-    val matrix = Matrix(3, 3, 
-        Seq(Tile(Position(0, 0), Blue),
-            Tile(Position(1, 0), Blue),
-            Tile(Position(2, 0), Blue),
-            Tile(Position(0, 1), Yellow),
-            Tile(Position(1, 1), Yellow),
-            Tile(Position(2, 1), Yellow),
-            Tile(Position(0, 2), Red),
-            Tile(Position(1, 2), Red),
-            Tile(Position(2, 2), Red)))
+    val matrix = Matrix(3, 3).shuffle(_ => Red)
             
     println(matrix.mkString)
 
@@ -38,14 +29,30 @@ class BoardSpec extends FlatSpec with Matchers {
     val matrix0 = Matrix(3, 3, Seq(Tile(Position(0, 0), Red)))
     
     println(matrix0.mkString)
-    val matrix1 = matrix0.atPosition(Position(0, 0)).map(matrix0.move(_, Position(1,1))).get
+    val matrix1 = matrix0.atPosition(Position(0, 0)).map(matrix0.move(_, Position(1, 1))).get
     println(matrix1.mkString)
     
     matrix0.atPosition(Position(0, 0)) should be (Some(Tile(Position(0, 0), Red)))
+    matrix0.atPosition(Position(1, 1)) should be (None)
+    matrix1.atPosition(Position(0, 0)) should be (None)
     matrix1.atPosition(Position(1, 1)) should be (Some(Tile(Position(1, 1), Red)))
   }
   
-  "A Matrix" should "move column of tiles" in {
+  "A Matrix" should "clean a column of tiles" in {
+    val matrix0 = Matrix(3, 3, 
+        Seq(Tile(Position(0, 0), Red), 
+            Tile(Position(0, 1), Blue),
+            Tile(Position(0, 2), Yellow)))
+    
+    println(matrix0.mkString)
+    val matrix1 = matrix0.cleanColumn(0)
+    println(matrix1.mkString)
+    
+    matrix0.column(0).flatMap(matrix0.atPosition(_).toSeq).map(_.color) should be (Seq(Red, Blue, Yellow))
+    matrix1.column(0).flatMap(matrix1.atPosition(_).toSeq).map(_.color) should be (Seq())
+  }
+  
+  "A Matrix" should "move a column of tiles" in {
     val matrix0 = Matrix(3, 3, 
         Seq(Tile(Position(0, 0), Red), 
             Tile(Position(0, 1), Blue),
@@ -59,7 +66,21 @@ class BoardSpec extends FlatSpec with Matchers {
     matrix1.column(2).flatMap(matrix1.atPosition(_).toSeq).map(_.color) should be (Seq(Red, Blue, Yellow))
   }
   
-  "A Matrix" should "move row of tiles" in {
+  "A Matrix" should "clean a row of tiles" in {
+    val matrix0 = Matrix(3, 3, 
+        Seq(Tile(Position(0, 0), Red), 
+            Tile(Position(1, 0), Blue),
+            Tile(Position(2, 0), Yellow)))
+    
+    println(matrix0.mkString)
+    val matrix1 = matrix0.cleanRow(0)
+    println(matrix1.mkString)
+    
+    matrix0.row(0).flatMap(matrix0.atPosition(_).toSeq).map(_.color) should be (Seq(Red, Blue, Yellow))
+    matrix1.row(0).flatMap(matrix1.atPosition(_).toSeq).map(_.color) should be (Seq())
+  }
+  
+  "A Matrix" should "move a row of tiles" in {
     val matrix0 = Matrix(3, 3, 
         Seq(Tile(Position(0, 0), Red), 
             Tile(Position(1, 0), Blue),
@@ -73,7 +94,7 @@ class BoardSpec extends FlatSpec with Matchers {
     matrix1.row(2).flatMap(matrix1.atPosition(_).toSeq).map(_.color) should be (Seq(Red, Blue, Yellow))
   }
   
-  "A Matrix" should "fall tiles" in {
+  "A Matrix" should "fall tiles down" in {
     val matrix0 = Matrix(3, 3, 
         Seq(Tile(Position(0, 2), Red), 
             Tile(Position(1, 2), Blue),
@@ -87,7 +108,7 @@ class BoardSpec extends FlatSpec with Matchers {
     matrix1.row(0).flatMap(matrix1.atPosition(_).toSeq).map(_.color) should be (Seq(Red, Blue, Yellow))
   }
   
-  "A Matrix" should "shift tiles" in {
+  "A Matrix" should "shift tiles to left" in {
     val matrix0 = Matrix(3, 3, 
         Seq(Tile(Position(2, 0), Red), 
             Tile(Position(2, 1), Blue),

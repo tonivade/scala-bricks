@@ -17,7 +17,7 @@ object MatrixOps {
   }
   
   def lookup(pos: Position) = State[Matrix, Seq[Position]] {
-    matrix => (matrix, matrix.lookup(pos))
+    matrix => (matrix, matrix.adjacent(pos))
   }
   
   def clean(xs: Seq[Position]) = State[Matrix, Unit] {
@@ -46,14 +46,14 @@ object MatrixOps {
   @tailrec
   def shiftCol(matrix: Matrix, col: Int): Matrix = 
     if (col < matrix.width) 
-      shiftCol(tryMoveCol(matrix, col).getOrElse(matrix), col + 1)
+      shiftCol(tryMoveCol(matrix, col).fold(matrix)(identity), col + 1)
     else 
       matrix
     
   @tailrec
   def fallTile(matrix: Matrix, col: Int, top: Int): Matrix = 
     if (top < matrix.height) 
-      fallTile(tryMove(matrix, col, top).getOrElse(matrix), col, top + 1)
+      fallTile(tryMove(matrix, col, top).fold(matrix)(identity), col, top + 1)
     else 
       matrix
   
@@ -82,7 +82,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
     Matrix(width, height, matrix.map(p => Tile(p, nextColor(p))))
   
   def move(tile: Tile, position: Position): Matrix = 
-    clean(Seq(tile.position)).add(Seq(Tile(position, tile.color)))
+    clean(Seq(tile.position)).addTiles(Seq(Tile(position, tile.color)))
   
   def moveColumn(fromX: Int, toX: Int): Matrix = {
     val newColumn = for {
@@ -90,7 +90,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
       tile <- atPosition(position)
     } yield Tile(Position(toX, position.y), tile.color)
     
-    clean(column(fromX)).add(newColumn)
+    cleanColumn(fromX).addTiles(newColumn)
   }
   
   def moveRow(fromY: Int, toY: Int): Matrix = {
@@ -99,19 +99,23 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
       tile <- atPosition(position)
     } yield Tile(Position(position.x, toY), tile.color)
     
-    clean(row(fromY)).add(newRow)
+    clean(row(fromY)).addTiles(newRow)
   }
+  
+  def cleanRow(y: Int): Matrix = clean(row(y))
+
+  def cleanColumn(x: Int): Matrix = clean(column(x))
   
   def clean(positions: Seq[Position]): Matrix = 
     Matrix(width, height, (bricks -- positions).values.toSeq)
   
-  def add(toadd: Seq[Tile]): Matrix = {
+  def addTiles(toadd: Seq[Tile]): Matrix = {
     val newTiles = toadd.map(tile => tile.position -> tile)
     val _bricks = bricks ++ newTiles
     Matrix(width, height, _bricks.values.toSeq)
   }
   
-  def lookup(position: Position): Seq[Position] =
+  def adjacent(position: Position): Seq[Position] =
     atPosition(position).map(visit(_, Set())).getOrElse(Set()).toSeq
   
   def atPosition(position: Position): Option[Tile] = bricks.get(position)
@@ -120,8 +124,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
     
   def isEmpty: Boolean = bricks.isEmpty
   
-  def gameover(): Boolean =
-    bricks.values.flatMap(search(_)).isEmpty
+  def gameover(): Boolean = bricks.values.flatMap(search(_)).isEmpty
     
   def matrix: Seq[Position] = 
     for {
@@ -155,9 +158,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
   }
 
   private def search(current: Tile): Set[Tile] = 
-    for {
-      adjacent <- neighbors(current).filter(current.adjacent(_))
-    } yield adjacent
+    neighbors(current).filter(current.adjacent(_))
   
   private def neighbors(current: Tile): Set[Tile] = 
     for {
@@ -196,4 +197,52 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
 
     result.toString
   }
+}
+
+object Main extends App {
+  import cats.effect.IO
+  import cats.data.StateT
+  import cats.data.StateT.liftF
+  import scala.io.StdIn.readLine
+  
+  val gets = IO(readLine())
+  def puts(str: String) = IO(println(str))
+  def toInt(str: String) = IO(str.toInt)
+
+  def click(position: Position) = StateT[IO, Matrix, Unit] {
+    matrix => IO(MatrixOps.click(matrix, position), ())
+  }
+  
+  def matrixToString = StateT[IO, Matrix, String] {
+    matrix => IO(matrix, matrix.mkString)
+  }
+  
+  val gameover = StateT[IO, Matrix, Boolean] {
+    matrix => IO(matrix, matrix.gameover())
+  }
+  
+  val exit = for {
+    str <- matrixToString
+    _   <- liftF(puts(str))
+    _   <- liftF(puts("Gameover!!!"))
+    _   <- liftF(IO(Unit))
+  } yield ()
+  
+  val loop: StateT[IO, Matrix, Unit] = 
+    for {
+      str <- matrixToString
+      _   <- liftF(puts(str))
+      _   <- liftF(puts("Please enter X"))
+      _x  <- liftF(gets)
+      _   <- liftF(puts("Please enter Y"))
+      _y  <- liftF(gets)
+      x   <- liftF(toInt(_x))
+      y   <- liftF(toInt(_y))
+      _   <- click(Position(x, y))
+      go  <- gameover
+      _   <- if (go) exit else loop
+    } yield ()
+  
+  val start = Matrix(3, 3).shuffle(ColorGenerator.randomColor)
+  val result = loop.runS(start).unsafeRunSync()
 }
