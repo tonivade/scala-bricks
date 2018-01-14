@@ -11,12 +11,14 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.ButtonType
 
+import tomby.scala.bricks.MatrixOps._
+
 object BoardGUI extends JFXApp {
 
-  private var board: Board = Board(10, 15).shuffle(ColorGenerator.randomColor)
+  private var matrix: Matrix = Matrix(10, 15).shuffle(ColorGenerator.randomColor)
   private val _size = 20
-  private val _height = board.height * _size
-  private val _width = board.width * _size
+  private val _height = matrix.height * _size
+  private val _width = matrix.width * _size
   private val _padding = _size * 2
   
   private val pane = new Pane {
@@ -26,10 +28,10 @@ object BoardGUI extends JFXApp {
   pane.handleEvent(MouseEvent.MouseClicked) {
     event: MouseEvent => {
       val _x = (event.getSceneX / _size).toInt - 1
-      val _y = board.height - (event.getSceneY / _size).toInt
-      board = board.click(_x, _y)
+      val _y = matrix.height - (event.getSceneY / _size).toInt
+      matrix = click(matrix, Position(_x, _y))
       pane.children = paint()
-      if (board.gameover()) if (board.win()) win() else gameover()
+      if (matrix.gameover()) if (matrix.isEmpty) win() else gameover()
     }
   }
   
@@ -49,7 +51,7 @@ object BoardGUI extends JFXApp {
     }.showAndWait()
     result match {
       case Some(ButtonType.OK) => {
-        board = board.shuffle(ColorGenerator.randomColor)
+        matrix = matrix.shuffle(ColorGenerator.randomColor)
         pane.children = paint()
       }
       case _ => ()
@@ -70,7 +72,7 @@ object BoardGUI extends JFXApp {
   }
 
   private def paint(): Seq[Rectangle] = 
-    board.tiles.map(toRectangle).toSeq
+    matrix.tiles.map(toRectangle).toSeq
   
   private def toRectangle(tile: Tile): Rectangle = 
     new Rectangle {
