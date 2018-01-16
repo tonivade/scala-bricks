@@ -7,8 +7,10 @@ import scala.io.StdIn.readLine
 
 object Main extends App {
   
+  val read: StateT[IO, Matrix, String] = liftF(IO(readLine()))
   val readInt: StateT[IO, Matrix, Int] = liftF(IO(readLine().toInt))
-  def puts(str: String): StateT[IO, Matrix, Unit] = liftF(IO(println(str)))
+  def print(str: String): StateT[IO, Matrix, Unit] = liftF(IO(println(str)))
+  val quit: StateT[IO, Matrix, Unit] = liftF(IO(Unit))
 
   def click(position: Position) = StateT[IO, Matrix, Unit] {
     matrix => IO(MatrixOps.click(matrix, position), ())
@@ -25,14 +27,13 @@ object Main extends App {
   val printMatrix: StateT[IO, Matrix, Unit] = 
     for {
       str <- matrixToString
-      _   <- puts(str)
+      _   <- print(str)
     } yield ()
   
   val exit = 
     for {
       _   <- printMatrix
-      _   <- puts("Gameover!!!")
-      _   <- liftF(IO(Unit))
+      _   <- print("Gameover!!!")
     } yield ()
     
   val shuffle = StateT[IO, Matrix, Unit] {
@@ -42,9 +43,9 @@ object Main extends App {
   val loop: StateT[IO, Matrix, Unit] = 
     for {
       _   <- printMatrix
-      _   <- puts("Please enter X")
+      _   <- print("Please enter X")
       x   <- readInt
-      _   <- puts("Please enter Y")
+      _   <- print("Please enter Y")
       y   <- readInt
       _   <- click(Position(x, y))
       go  <- gameover
@@ -53,9 +54,12 @@ object Main extends App {
   
   val mainLoop: StateT[IO, Matrix, Unit] = 
     for {
-      _ <- puts("Let's play a game")
+      _ <- print("Let's play a game")
       _ <- shuffle
       _ <- loop
+      _ <- print("Do you want to play again?")
+      s <- read
+      _ <- if (s == "y") mainLoop else quit
     } yield()
   
   val result = mainLoop.runS(Matrix(5, 5)).unsafeRunSync()
