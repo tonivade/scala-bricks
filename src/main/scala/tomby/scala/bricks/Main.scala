@@ -7,9 +7,8 @@ import scala.io.StdIn.readLine
 
 object Main extends App {
   
-  val gets = IO(readLine())
-  def puts(str: String) = IO(println(str))
-  def toInt(str: String) = IO(str.toInt)
+  val readInt: StateT[IO, Matrix, Int] = liftF(IO(readLine().toInt))
+  def puts(str: String): StateT[IO, Matrix, Unit] = liftF(IO(println(str)))
 
   def click(position: Position) = StateT[IO, Matrix, Unit] {
     matrix => IO(MatrixOps.click(matrix, position), ())
@@ -23,28 +22,41 @@ object Main extends App {
     matrix => IO(matrix, matrix.gameover())
   }
   
-  val exit = for {
-    str <- matrixToString
-    _   <- liftF(puts(str))
-    _   <- liftF(puts("Gameover!!!"))
-    _   <- liftF(IO(Unit))
-  } yield ()
+  val printMatrix: StateT[IO, Matrix, Unit] = 
+    for {
+      str <- matrixToString
+      _   <- puts(str)
+    } yield ()
+  
+  val exit = 
+    for {
+      _   <- printMatrix
+      _   <- puts("Gameover!!!")
+      _   <- liftF(IO(Unit))
+    } yield ()
+    
+  val shuffle = StateT[IO, Matrix, Unit] {
+    	matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
+  }
   
   val loop: StateT[IO, Matrix, Unit] = 
     for {
-      str <- matrixToString
-      _   <- liftF(puts(str))
-      _   <- liftF(puts("Please enter X"))
-      _x  <- liftF(gets)
-      _   <- liftF(puts("Please enter Y"))
-      _y  <- liftF(gets)
-      x   <- liftF(toInt(_x))
-      y   <- liftF(toInt(_y))
+      _   <- printMatrix
+      _   <- puts("Please enter X")
+      x   <- readInt
+      _   <- puts("Please enter Y")
+      y   <- readInt
       _   <- click(Position(x, y))
       go  <- gameover
       _   <- if (go) exit else loop
     } yield ()
   
-  val start = Matrix(3, 3).shuffle(ColorGenerator.randomColor)
-  val result = loop.runS(start).unsafeRunSync()
+  val mainLoop: StateT[IO, Matrix, Unit] = 
+    for {
+      _ <- puts("Let's play a game")
+      _ <- shuffle
+      _ <- loop
+    } yield()
+  
+  val result = mainLoop.runS(Matrix(5, 5)).unsafeRunSync()
 }
