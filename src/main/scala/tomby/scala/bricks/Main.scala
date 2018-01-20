@@ -59,9 +59,9 @@ object Main extends App {
       pos <- toPosition(x, y)
   } yield pos
   
-  val error: StateT[IO, Matrix, Unit] = 
+  def error(t: Throwable): StateT[IO, Matrix, Unit] = 
     for {
-       _ <- print("Invalid position! :(")
+       _ <- print(s"Invalid position! $t")
        _ <- loop
     } yield ()  
 
@@ -69,7 +69,7 @@ object Main extends App {
     for {
       _   <- printMatrix
       pos <- readPosition
-      _   <- if (pos.isSuccess) click(pos.get) else error
+      _   <- pos.fold(error(_), click(_))
       go  <- gameover
       _   <- if (go) exit else loop
     } yield ()
