@@ -4,11 +4,12 @@ import cats.effect.IO
 import cats.data.StateT
 import cats.data.StateT.liftF
 import scala.io.StdIn.readLine
+import scala.util.Try
 
 object Main extends App {
   
   val read: StateT[IO, Matrix, String] = liftF(IO(readLine()))
-  val readInt: StateT[IO, Matrix, Int] = liftF(IO(readLine().toInt))
+  val readInt: StateT[IO, Matrix, Try[Int]] = liftF(IO(Try(readLine().toInt)))
   def print(str: String): StateT[IO, Matrix, Unit] = liftF(IO(println(str)))
   val quit: StateT[IO, Matrix, Unit] = liftF(IO(Unit))
 
@@ -39,15 +40,36 @@ object Main extends App {
   val shuffle = StateT[IO, Matrix, Unit] {
     	matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
   }
-  
-  val loop: StateT[IO, Matrix, Unit] = 
-    for {
-      _   <- printMatrix
+    
+  def toPosition(x: Try[Int], y: Try[Int]) = StateT[IO, Matrix, Try[Position]] {
+    matrix => IO {
+      val pos = for {
+        a <- x
+        b <- y
+      } yield Position(a, b)
+      (matrix, pos)
+    }
+  }
+    
+  val readPosition: StateT[IO, Matrix, Try[Position]] = for {
       _   <- print("Please enter X")
       x   <- readInt
       _   <- print("Please enter Y")
       y   <- readInt
-      _   <- click(Position(x, y))
+      pos <- toPosition(x, y)
+  } yield pos
+  
+  val error: StateT[IO, Matrix, Unit] = 
+    for {
+       _ <- print("Invalid position! :(")
+       _ <- loop
+    } yield ()  
+
+  val loop: StateT[IO, Matrix, Unit] = 
+    for {
+      _   <- printMatrix
+      pos <- readPosition
+      _   <- if (pos.isSuccess) click(pos.get) else error
       go  <- gameover
       _   <- if (go) exit else loop
     } yield ()
