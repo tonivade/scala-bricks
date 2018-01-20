@@ -31,24 +31,26 @@ object Main extends App {
       _   <- print(str)
     } yield ()
   
+  val numberOfTiles = StateT[IO, Matrix, Int] {
+    matrix => IO(matrix, matrix.tiles.size)
+  }
+  
   val exit = 
     for {
-      _   <- printMatrix
-      _   <- print("Gameover!!!")
+      _  <- printMatrix
+      n  <- numberOfTiles
+      _  <- if (n > 0) print(s"Gameover!!! $n tiles left") else print("You win!!!")
     } yield ()
     
   val shuffle = StateT[IO, Matrix, Unit] {
     	matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
   }
-    
+
+  def map2[A, B](x: Try[A], y: Try[A])(fa: (A, A) => B): Try[B] = 
+    x flatMap { a => y map { b => fa(a, b) } }
+
   def toPosition(x: Try[Int], y: Try[Int]) = StateT[IO, Matrix, Try[Position]] {
-    matrix => IO {
-      val pos = for {
-        a <- x
-        b <- y
-      } yield Position(a, b)
-      (matrix, pos)
-    }
+    matrix => IO(matrix, map2(x, y)(Position(_, _)))
   }
     
   val readPosition: StateT[IO, Matrix, Try[Position]] = for {
