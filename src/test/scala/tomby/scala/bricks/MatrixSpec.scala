@@ -3,7 +3,7 @@ package tomby.scala.bricks
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
-import tomby.scala.bricks.MatrixOps._
+import tomby.scala.bricks.Matrix._
 
 class MatrixSpec extends FlatSpec with Matchers {
   

@@ -2,7 +2,7 @@ package tomby.scala.bricks
 
 import scala.annotation.tailrec
 
-object MatrixOps {
+object Matrix {
   import cats.data.State
   
   def click(matrix: Matrix, pos: Position) = {
@@ -165,6 +165,8 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
       pos <- current.position.neighbors
       tile <- atPosition(pos)
     } yield tile
+  
+  import Console.{RESET, RED_B, GREEN_B, BLUE_B, YELLOW_B }
 
   def mkString(): String = {
     val result = new StringBuilder
@@ -184,10 +186,10 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
         result.append(atPosition(Position(x, y)).fold(" ") {
           tile => {
             tile.color match {
-              case Red => "R"
-              case Green => "G"
-              case Blue => "B"
-              case Yellow => "Y"
+              case Red => s"${RESET}${RED_B} ${RESET}"
+              case Green => s"${RESET}${GREEN_B} ${RESET}"
+              case Blue => s"${RESET}${BLUE_B} ${RESET}"
+              case Yellow => s"${RESET}${YELLOW_B} ${RESET}"
             }
           }
         })

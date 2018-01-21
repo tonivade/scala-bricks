@@ -9,4 +9,3 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.1"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "0.8"
 
-fork := true

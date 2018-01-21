@@ -11,7 +11,7 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.ButtonType
 
-import tomby.scala.bricks.MatrixOps._
+import tomby.scala.bricks.Matrix._
 
 object ClickEmAll extends JFXApp {
 

@@ -14,7 +14,7 @@ object Main extends App {
   val quit: StateT[IO, Matrix, Unit] = liftF(IO(Unit))
 
   def click(position: Position) = StateT[IO, Matrix, Unit] {
-    matrix => IO(MatrixOps.click(matrix, position), ())
+    matrix => IO(Matrix.click(matrix, position), ())
   }
   
   def matrixToString = StateT[IO, Matrix, String] {
