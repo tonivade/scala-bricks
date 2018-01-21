@@ -25,26 +25,28 @@ object Main extends App {
     matrix => IO(matrix, matrix.gameover())
   }
   
-  val printMatrix: StateT[IO, Matrix, Unit] = 
-    for {
-      str <- matrixToString
-      _   <- print(str)
-    } yield ()
-  
   val numberOfTiles = StateT[IO, Matrix, Int] {
     matrix => IO(matrix, matrix.tiles.size)
   }
-  
-  val exit = 
-    for {
-      _  <- printMatrix
-      n  <- numberOfTiles
-      _  <- if (n > 0) print(s"Gameover!!! $n tiles left") else print("You win!!!")
-    } yield ()
     
   val shuffle = StateT[IO, Matrix, Unit] {
     	matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
   }
+  
+  val printMatrix: StateT[IO, Matrix, Unit] = 
+    for {
+      str <- matrixToString
+      _   <- print(str)
+      n   <- numberOfTiles
+      _   <- print(s"$n tiles left")
+    } yield ()
+  
+  val exit = 
+    for {
+      _ <- printMatrix
+      n <- numberOfTiles
+      _ <- if (n > 0) print("Gameover!!!") else print("You win!!!")
+    } yield ()
 
   def map2[A, B](x: Try[A], y: Try[A])(fa: (A, A) => B): Try[B] = 
     x flatMap { a => y map { b => fa(a, b) } }
@@ -52,7 +54,7 @@ object Main extends App {
   def toPosition(x: Try[Int], y: Try[Int]) = StateT[IO, Matrix, Try[Position]] {
     matrix => IO(matrix, map2(x, y)(Position(_, _)))
   }
-    
+
   val readPosition: StateT[IO, Matrix, Try[Position]] = for {
       _   <- print("Please enter X")
       x   <- readInt
