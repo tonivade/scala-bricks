@@ -17,7 +17,7 @@ object Main extends App {
     matrix => IO(Matrix.click(matrix, position), ())
   }
   
-  def matrixToString = StateT[IO, Matrix, String] {
+  val matrixToString = StateT[IO, Matrix, String] {
     matrix => IO(matrix, matrix.mkString)
   }
   
@@ -55,18 +55,19 @@ object Main extends App {
     matrix => IO(matrix, map2(x, y)(Position(_, _)))
   }
 
-  val readPosition: StateT[IO, Matrix, Try[Position]] = for {
+  val readPosition: StateT[IO, Matrix, Try[Position]] = 
+    for {
       _   <- print("Please enter X")
       x   <- readInt
       _   <- print("Please enter Y")
       y   <- readInt
       pos <- toPosition(x, y)
-  } yield pos
+    } yield pos
   
   def error(t: Throwable): StateT[IO, Matrix, Unit] = 
     for {
-       _ <- print(s"Invalid position! $t")
-       _ <- loop
+      _ <- print(s"Invalid position! $t")
+      _ <- loop
     } yield ()  
 
   val loop: StateT[IO, Matrix, Unit] = 
