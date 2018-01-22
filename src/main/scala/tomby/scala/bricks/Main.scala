@@ -5,6 +5,8 @@ import cats.data.StateT
 import cats.data.StateT.liftF
 import scala.io.StdIn.readLine
 import scala.util.Try
+import cats.Applicative
+import cats.instances.try_._
 
 object Main extends App {
   
@@ -48,11 +50,8 @@ object Main extends App {
       _ <- if (n > 0) print("Gameover!!!") else print("You win!!!")
     } yield ()
 
-  def map2[A, B](x: Try[A], y: Try[A])(fa: (A, A) => B): Try[B] = 
-    x flatMap { a => y map { b => fa(a, b) } }
-
   def toPosition(x: Try[Int], y: Try[Int]) = StateT[IO, Matrix, Try[Position]] {
-    matrix => IO(matrix, map2(x, y)(Position(_, _)))
+    matrix => IO(matrix, Applicative[Try].map2(x, y)(Position(_, _)))
   }
 
   val readPosition: StateT[IO, Matrix, Try[Position]] = 
