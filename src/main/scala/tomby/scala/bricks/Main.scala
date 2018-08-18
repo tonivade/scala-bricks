@@ -32,7 +32,7 @@ object Main extends App {
   }
     
   val shuffle = StateT[IO, Matrix, Unit] {
-    	matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
+    matrix => IO(matrix.shuffle(ColorGenerator.randomColor), ())
   }
   
   val printMatrix: StateT[IO, Matrix, Unit] = 
