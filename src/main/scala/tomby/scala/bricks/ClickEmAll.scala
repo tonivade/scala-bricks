@@ -1,7 +1,7 @@
 package tomby.scala.bricks
 
 import scalafx.Includes._
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 import scalafx.scene.paint.{Color => FxColor}
 import scalafx.scene.shape.Rectangle
@@ -10,7 +10,6 @@ import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.ButtonType
-
 import tomby.scala.bricks.Matrix._
 
 object ClickEmAll extends JFXApp {
@@ -31,7 +30,7 @@ object ClickEmAll extends JFXApp {
       val _y = matrix.height - (event.getSceneY / _size).toInt
       matrix = click(matrix, Position(_x, _y))
       pane.children = paint()
-      if (matrix.gameover()) if (matrix.isEmpty) win() else gameover()
+      if (matrix.gameOver()) if (matrix.isEmpty) win() else gameOver()
     }
   }
   
@@ -43,36 +42,36 @@ object ClickEmAll extends JFXApp {
     }
   }
 
-  private def gameover() {
+  private def gameOver() {
     val result = new Alert(AlertType.Confirmation, "GAME OVER!") {
       initOwner(stage)
       headerText = "GAME OVER!"
       contentText = "Do you want to play again?"
     }.showAndWait()
     result match {
-      case Some(ButtonType.OK) => {
-        matrix = matrix.shuffle(ColorGenerator.randomColor)
-        pane.children = paint()
-      }
-      case _ => ()
+      case Some(ButtonType.OK) => playAgain()
+      case _ => Platform.exit()
     }
+  }
+
+  private def playAgain(): Unit = {
+    matrix = matrix.shuffle(ColorGenerator.randomColor)
+    pane.children = paint()
   }
 
   private def win() {
     new Alert(AlertType.Information, "YOU WIN!").showAndWait()
   }
   
-  private def toColor(tile: Tile): FxColor = {
-    tile.color match {
-      case Red => FxColor.Red
-      case Green => FxColor.Green
-      case Blue => FxColor.Blue
-      case Yellow => FxColor.Yellow
-    }
+  private def toColor(tile: Tile): FxColor = tile.color match {
+    case Red => FxColor.Red
+    case Green => FxColor.Green
+    case Blue => FxColor.Blue
+    case Yellow => FxColor.Yellow
   }
 
   private def paint(): Seq[Rectangle] = 
-    matrix.tiles.map(toRectangle).toSeq
+    matrix.tiles.map(toRectangle)
   
   private def toRectangle(tile: Tile): Rectangle = 
     new Rectangle {

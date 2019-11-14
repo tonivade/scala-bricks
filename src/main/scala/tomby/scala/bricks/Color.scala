@@ -16,5 +16,4 @@ object ColorGenerator {
   
   def randomColor(position: Position): Color = 
     colors(random.nextInt(colors.length))
-
 }

@@ -5,7 +5,7 @@ import scala.annotation.tailrec
 object Matrix {
   import cats.data.State
   
-  def click(matrix: Matrix, pos: Position) = {
+  def click(matrix: Matrix, pos: Position): Matrix = {
     val program = for {
       _pos <- lookup(pos)
       _    <- clean(_pos)
@@ -16,42 +16,42 @@ object Matrix {
     program.runS(matrix).value
   }
   
-  def lookup(pos: Position) = State[Matrix, Seq[Position]] {
+  def lookup(pos: Position): State[Matrix, Seq[Position]] = State {
     matrix => (matrix, matrix.adjacent(pos))
   }
   
-  def clean(xs: Seq[Position]) = State[Matrix, Unit] {
+  def clean(xs: Seq[Position]): State[Matrix, Unit] = State {
     matrix => (matrix.clean(xs), ())
   }
   
-  val fallS = State[Matrix, Unit] {
+  val fallS: State[Matrix, Unit] = State {
     matrix => (fall(matrix), ())
   }
   
-  val shiftS = State[Matrix, Unit] {
+  val shiftS: State[Matrix, Unit] = State {
     matrix => (shift(matrix), ())
   }
   
-  def fall(matrix: Matrix): Matrix = fallCol(matrix, 0)
+  def fall(matrix: Matrix): Matrix = fallCol(matrix)
   
-  def shift(matrix: Matrix): Matrix = shiftCol(matrix, 0)
+  def shift(matrix: Matrix): Matrix = shiftCol(matrix)
   
   @tailrec
-  def fallCol(matrix: Matrix, col: Int): Matrix = 
+  def fallCol(matrix: Matrix, col: Int = 0): Matrix =
     if (col < matrix.width) 
-      fallCol(fallTile(matrix, col, 0), col + 1)
+      fallCol(fallTile(matrix, col), col + 1)
     else 
       matrix
   
   @tailrec
-  def shiftCol(matrix: Matrix, col: Int): Matrix = 
+  def shiftCol(matrix: Matrix, col: Int = 0): Matrix =
     if (col < matrix.width) 
       shiftCol(tryMoveCol(matrix, col).fold(matrix)(identity), col + 1)
     else 
       matrix
     
   @tailrec
-  def fallTile(matrix: Matrix, col: Int, top: Int): Matrix = 
+  def fallTile(matrix: Matrix, col: Int, top: Int = 0): Matrix =
     if (top < matrix.height) 
       fallTile(tryMove(matrix, col, top).fold(matrix)(identity), col, top + 1)
     else 
@@ -71,8 +71,8 @@ object Matrix {
   def nextX(matrix: Matrix, left: Int): Option[Int] = 
     matrix.row(0).takeWhile(_.x < left).find(!matrix.isPresent(_)).map(_.x)
   
-  def nextY(matrix: Matrix, col: Int, top: Int) = 
-     matrix.column(col).takeWhile(_.y < top).find(!matrix.isPresent(_)).map(_.y)
+  def nextY(matrix: Matrix, col: Int, top: Int): Option[Int] =
+    matrix.column(col).takeWhile(_.y < top).find(!matrix.isPresent(_)).map(_.y)
 }
 
 case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
@@ -109,8 +109,8 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
   def clean(positions: Seq[Position]): Matrix = 
     Matrix(width, height, (bricks -- positions).values.toSeq)
   
-  def addTiles(toadd: Seq[Tile]): Matrix = {
-    val newTiles = toadd.map(tile => tile.position -> tile)
+  def addTiles(toAdd: Seq[Tile]): Matrix = {
+    val newTiles = toAdd.map(tile => tile.position -> tile)
     val _bricks = bricks ++ newTiles
     Matrix(width, height, _bricks.values.toSeq)
   }
@@ -124,7 +124,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
     
   def isEmpty: Boolean = bricks.isEmpty
   
-  def gameover(): Boolean = bricks.values.flatMap(search(_)).isEmpty
+  def gameOver(): Boolean = bricks.values.flatMap(search).isEmpty
     
   def matrix: Seq[Position] = 
     for {
@@ -154,11 +154,11 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
     
   private def visit(tile: Tile, visited: Set[Tile]): Set[Position] = {
     val tiles = search(tile)
-    tiles.map(_.position) ++ tiles.filterNot(visited.contains(_)).flatMap(visit(_, visited + tile))
+    tiles.map(_.position) ++ tiles.diff(visited).flatMap(visit(_, visited + tile))
   }
 
   private def search(current: Tile): Set[Tile] = 
-    neighbors(current).filter(current.adjacent(_))
+    neighbors(current).filter(current.adjacent)
   
   private def neighbors(current: Tile): Set[Tile] = 
     for {
@@ -168,7 +168,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
   
   import Console.{RESET, RED_B, GREEN_B, BLUE_B, YELLOW_B }
 
-  def mkString(): String = {
+  def mkString: String = {
     val result = new StringBuilder
 
     result.append("  ")
@@ -186,10 +186,10 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
         result.append(atPosition(Position(x, y)).fold(" ") {
           tile => {
             tile.color match {
-              case Red => s"${RESET}${RED_B} ${RESET}"
-              case Green => s"${RESET}${GREEN_B} ${RESET}"
-              case Blue => s"${RESET}${BLUE_B} ${RESET}"
-              case Yellow => s"${RESET}${YELLOW_B} ${RESET}"
+              case Red => s"$RESET$RED_B $RESET"
+              case Green => s"$RESET$GREEN_B $RESET"
+              case Blue => s"$RESET$BLUE_B $RESET"
+              case Yellow => s"$RESET$YELLOW_B $RESET"
             }
           }
         })
