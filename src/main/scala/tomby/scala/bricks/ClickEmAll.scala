@@ -26,8 +26,8 @@ object ClickEmAll extends JFXApp {
   
   pane.handleEvent(MouseEvent.MouseClicked) {
     event: MouseEvent => {
-      val _x = (event.getSceneX / _size).toInt - 1
-      val _y = matrix.height - (event.getSceneY / _size).toInt
+      val _x = (event.sceneX / _size).toInt - 1
+      val _y = matrix.height - (event.sceneY / _size).toInt
       matrix = click(matrix, Position(_x, _y))
       pane.children = paint()
       if (matrix.gameOver()) if (matrix.isEmpty) win() else gameOver()

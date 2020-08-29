@@ -1,11 +1,10 @@
 package tomby.scala.bricks
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import tomby.scala.bricks.Matrix._
 
-class MatrixSpec extends FlatSpec with Matchers {
+class MatrixSpec extends AnyFlatSpec with Matchers {
   
   "A Matrix" should "be empty at the beginning" in {
     val matrix = Matrix(3, 3)
