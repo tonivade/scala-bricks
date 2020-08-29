@@ -120,7 +120,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
   
   def atPosition(position: Position): Option[Tile] = bricks.get(position)
   
-  def isPresent(pos: Position): Boolean = bricks.get(pos).isDefined
+  def isPresent(pos: Position): Boolean = bricks.contains(pos)
     
   def isEmpty: Boolean = bricks.isEmpty
   
