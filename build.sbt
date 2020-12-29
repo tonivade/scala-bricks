@@ -21,5 +21,5 @@ libraryDependencies += "org.openjfx" % "javafx-media" % "11.0.2" classifier osNa
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "14-R19"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
-libraryDependencies += "org.typelevel" %% "cats-core" % "2.1.1"
-libraryDependencies += "org.typelevel" %% "cats-effect" % "2.1.1"
+libraryDependencies += "org.typelevel" %% "cats-core" % "2.3.1"
+libraryDependencies += "org.typelevel" %% "cats-effect" % "2.3.1"
