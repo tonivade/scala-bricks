@@ -14,7 +14,7 @@ object Main extends App {
   val read: StateT[IO, Matrix, String] = liftF(IO(readLine()))
   val readInt: StateT[IO, Matrix, Try[Int]] = liftF(IO(Try(readLine().toInt)))
   def print(str: String): StateT[IO, Matrix, Unit] = liftF(IO(println(str)))
-  val quit: StateT[IO, Matrix, Unit] = liftF(IO(Unit))
+  val quit: StateT[IO, Matrix, Unit] = liftF(IO(()))
 
   def click(position: Position): StateT[IO, Matrix, Unit] = StateT {
     matrix => IO(Matrix.click(matrix, position), ())
