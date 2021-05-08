@@ -21,7 +21,7 @@ object ClickEmAll extends JFXApp {
   private val _padding = _size * 2
   
   private val pane = new Pane {
-    children = paint()
+    children = paint
   }
   
   pane.handleEvent(MouseEvent.MouseClicked) {
@@ -29,8 +29,8 @@ object ClickEmAll extends JFXApp {
       val _x = (event.sceneX / _size).toInt - 1
       val _y = matrix.height - (event.sceneY / _size).toInt
       matrix = click(matrix, Position(_x, _y))
-      pane.children = paint()
-      if (matrix.gameOver()) if (matrix.isEmpty) win() else gameOver()
+      pane.children = paint
+      if (matrix.gameover) if (matrix.isEmpty) win else gameover
     }
   }
   
@@ -42,26 +42,25 @@ object ClickEmAll extends JFXApp {
     }
   }
 
-  private def gameOver() {
+  private def gameover: Unit = {
     val result = new Alert(AlertType.Confirmation, "GAME OVER!") {
       initOwner(stage)
       headerText = "GAME OVER!"
       contentText = "Do you want to play again?"
     }.showAndWait()
     result match {
-      case Some(ButtonType.OK) => playAgain()
+      case Some(ButtonType.OK) => playAgain
       case _ => Platform.exit()
     }
   }
 
-  private def playAgain(): Unit = {
+  private def playAgain: Unit = {
     matrix = matrix.shuffle(ColorGenerator.randomColor)
-    pane.children = paint()
+    pane.children = paint
   }
 
-  private def win() {
+  private def win: Unit =
     new Alert(AlertType.Information, "YOU WIN!").showAndWait()
-  }
   
   private def toColor(tile: Tile): FxColor = tile.color match {
     case Red => FxColor.Red
@@ -70,8 +69,7 @@ object ClickEmAll extends JFXApp {
     case Yellow => FxColor.Yellow
   }
 
-  private def paint(): Seq[Rectangle] = 
-    matrix.tiles.map(toRectangle)
+  private def paint: Seq[Rectangle] = matrix.tiles.map(toRectangle)
   
   private def toRectangle(tile: Tile): Rectangle = 
     new Rectangle {

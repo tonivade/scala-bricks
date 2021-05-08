@@ -25,7 +25,7 @@ object Main extends App {
   }
   
   val gameOver: StateT[IO, Matrix, Boolean] = StateT {
-    matrix => IO(matrix, matrix.gameOver())
+    matrix => IO(matrix, matrix.gameover)
   }
   
   val numberOfTiles: StateT[IO, Matrix, Int] = StateT {

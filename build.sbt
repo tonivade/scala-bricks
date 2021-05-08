@@ -13,11 +13,11 @@ osName := (System.getProperty("os.name") match {
   case _ => throw new Exception("Unknown platform!")
 })
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "11.0.2" classifier osName.value
-libraryDependencies += "org.openjfx" % "javafx-controls" % "11.0.2" classifier osName.value
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "11.0.2" classifier osName.value
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "11.0.2" classifier osName.value
-libraryDependencies += "org.openjfx" % "javafx-media" % "11.0.2" classifier osName.value
+libraryDependencies += "org.openjfx" % "javafx-base" % "16" classifier osName.value
+libraryDependencies += "org.openjfx" % "javafx-controls" % "16" classifier osName.value
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "16" classifier osName.value
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "16" classifier osName.value
+libraryDependencies += "org.openjfx" % "javafx-media" % "16" classifier osName.value
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R22"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
