@@ -5,16 +5,15 @@ import scala.annotation.tailrec
 object Matrix {
   import cats.data.State
   
-  def click(matrix: Matrix, pos: Position): Matrix = {
-    val program = for {
+  def run(matrix: Matrix, pos: Position): Matrix =
+    click(pos).runS(matrix).value
+
+  def click(pos: Position): State[Matrix, Unit] = for {
       _pos <- lookup(pos)
       _    <- clean(_pos)
       _    <- fallS
       _    <- shiftS
     } yield ()
-    
-    program.runS(matrix).value
-  }
   
   def lookup(pos: Position): State[Matrix, Seq[Position]] = State {
     matrix => (matrix, matrix.adjacent(pos))
