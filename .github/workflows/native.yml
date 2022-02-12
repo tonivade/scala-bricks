@@ -40,7 +40,7 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: >-
           "C:\Program Files (x86)\Microsoft Visual
-          Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && sbt
+          Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && C:\Users\runneradmin\bin\sbt
           nativeImage
       - uses: actions/upload-artifact@v2
         with:
