@@ -27,16 +27,6 @@ lazy val nativeImage =
     .settings(
       Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll"),
       nativeImageInstalled := true,
-      nativeImageOptions ++= Seq(
-        s"-H:ReflectionConfigurationFiles=${(Compile / resourceDirectory).value / "reflect-config.json"}",
-        s"-H:ResourceConfigurationFiles=${(Compile / resourceDirectory).value / "resource-config.json"}",
-        "-H:+ReportExceptionStackTraces",
-        "--no-fallback",
-        "--allow-incomplete-classpath",
-        "--report-unsupported-elements-at-runtime",
-        "--verbose",
-        "-H:+JNI"
-      ),
       nativeImageAgentMerge := true
     )
 
