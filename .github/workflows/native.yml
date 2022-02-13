@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-latest, ubuntu-latest, windows-latest]
+        os: [macOS-latest, ubuntu-latest, windows-20211122.1]
         include:
           - os: macOS-latest
             uploaded_filename: bricks-x86_64-apple-darwin
@@ -21,7 +21,7 @@ jobs:
           - os: ubuntu-latest
             uploaded_filename: bricks-x86_64-pc-linux
             local_path: target/native-image/scala-bricks
-          - os: windows-latest
+          - os: windows-20211122.1
             uploaded_filename: bricks-x86_64-pc-win32.exe
             local_path: target\native-image\scala-bricks.exe
     steps:
@@ -32,15 +32,14 @@ jobs:
       - run: git fetch --tags || true
       - run: sbt nativeImage
         shell: bash
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-20211122.1' }}
       - run: echo $(pwd)
         shell: bash
       - name: sbt test
         shell: cmd
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ matrix.os == 'windows-20211122.1' }}
         run: >-
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && sbt
-          nativeImage
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && sbt nativeImage
       - uses: actions/upload-artifact@v2
         with:
           path: ${{ matrix.local_path }}
