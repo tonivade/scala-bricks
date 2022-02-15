@@ -31,6 +31,7 @@ lazy val nativeImage =
         s"-H:ReflectionConfigurationFiles=${(Compile / resourceDirectory).value / "reflect-config.json"}",
         s"-H:ResourceConfigurationFiles=${(Compile / resourceDirectory).value / "resource-config.json"}",
         s"-H:JNIConfigurationFiles=${(Compile / resourceDirectory).value / "jni-config.json"}",
+        "--allow-incomplete-classpath",
       ),
       nativeImageVersion := "22.0.0.2",
       nativeImageJvm := "graalvm-java17",
