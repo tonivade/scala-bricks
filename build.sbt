@@ -27,7 +27,10 @@ lazy val nativeImage =
     .settings(
       Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll"),
       nativeImageOptions ++= Seq(
-        "--no-fallback"
+        "--no-fallback",
+        s"-H:ReflectionConfigurationFiles=${(Compile / resourceDirectory).value / "reflect-config.json"}",
+        s"-H:ResourceConfigurationFiles=${(Compile / resourceDirectory).value / "resource-config.json"}",
+        s"-H:JNIConfigurationFiles=${(Compile / resourceDirectory).value / "jni-config.json"}",
       ),
       nativeImageVersion := "22.0.0.2",
       nativeImageJvm := "graalvm-java17",
