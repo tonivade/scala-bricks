@@ -26,6 +26,9 @@ lazy val nativeImage =
     .enablePlugins(NativeImagePlugin)
     .settings(
       Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll"),
+      nativeImageOptions ++= Seq(
+        "--no-fallback"
+      ),
       nativeImageVersion := "22.0.0.2",
       nativeImageJvm := "graalvm-java17",
       nativeImageAgentMerge := true
