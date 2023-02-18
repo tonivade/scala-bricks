@@ -1,3 +1,5 @@
+enablePlugins(JlinkPlugin)
+
 name := "scala-bricks"
 
 version := "0.1.0-SNAPSHOT"
@@ -23,22 +25,13 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.9.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.5.5"
 
-lazy val nativeImage =
-  project
-    .in(file("."))
-    .enablePlugins(NativeImagePlugin)
-    .settings(
-      Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll"),
-      nativeImageOptions ++= Seq(
-        "--no-fallback",
-        s"-H:ReflectionConfigurationFiles=${(Compile / resourceDirectory).value / osName / "reflect-config.json"}",
-        s"-H:ResourceConfigurationFiles=${(Compile / resourceDirectory).value / osName / "resource-config.json"}",
-        s"-H:JNIConfigurationFiles=${(Compile / resourceDirectory).value / osName / "jni-config.json"}",
-        "--allow-incomplete-classpath",
-      ),
-      nativeImageVersion := "22.0.0.2",
-      nativeImageJvm := "graalvm-java17",
-      nativeImageAgentMerge := true
-    )
-
 fork := true
+
+jlinkIgnoreMissingDependency := JlinkIgnore.only(
+  "scalafx" -> "javafx.embed.swing",
+  "scalafx" -> "javafx.scene.web",
+  "scalafx.embed.swing" -> "javafx.embed.swing",
+  "scalafx.scene.web" -> "javafx.scene.web"
+)
+
+maintainer := "antoniogmc@gmail.com"
