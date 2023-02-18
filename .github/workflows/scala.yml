@@ -42,12 +42,12 @@ jobs:
     - name: Run tests
       run: sbt test
     - name: Run jlink
-      run: sbt windows:packageBin
+      run: sbt universal:packageBin
     - uses: actions/upload-artifact@v3
       with:
         name: Click Em All
         path: |
-          target/universal/scala-bricks-*.msi 
+          target/universal/scala-bricks-*.zip
 
   build-mac:
 
