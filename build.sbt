@@ -34,4 +34,6 @@ jlinkIgnoreMissingDependency := JlinkIgnore.only(
   "scalafx.scene.web" -> "javafx.scene.web"
 )
 
+jlinkModules += "jdk.crypto.ec"
+
 maintainer := "antoniogmc@gmail.com"
