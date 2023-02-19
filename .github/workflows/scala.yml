@@ -54,7 +54,7 @@ jobs:
     - name: Run tests
       run: sbt test
     - name: Run jlink
-      run: sbt universal:packageBin
+      run: sbt windows:packageBin
     - uses: actions/upload-artifact@v3
       with:
         name: Click Em All
