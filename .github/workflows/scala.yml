@@ -67,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/universal/scala-bricks-1.0.0.msi
+        asset_path: target/windows/scala-bricks.msi
         asset_name: bricks-x86_64-pc-windows.msi
         asset_content_type: application/zip
 
