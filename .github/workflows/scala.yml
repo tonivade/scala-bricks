@@ -55,8 +55,6 @@ jobs:
       run: sbt test
     - name: Run jlink
       run: sbt windows:packageBin
-    - name: Search msi file
-      run: find target/
     - uses: actions/upload-artifact@v3
       with:
         name: Click Em All
