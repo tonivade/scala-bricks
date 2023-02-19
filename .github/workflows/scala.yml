@@ -68,7 +68,7 @@ jobs:
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: target/universal/scala-bricks-0.1.0-SNAPSHOT.zip
-        asset_name: bricks-x86_64-apple-darwin.zip
+        asset_name: bricks-x86_64-pc-windows.zip
         asset_content_type: application/zip
 
   build-mac:
