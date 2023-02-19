@@ -56,7 +56,7 @@ jobs:
     - name: Run jlink
       run: sbt windows:packageBin
     - name: List target
-      run: dir target/universal
+      run: dir target/jlink/output
     - uses: actions/upload-artifact@v3
       with:
         name: Click Em All
