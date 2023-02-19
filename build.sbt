@@ -1,4 +1,5 @@
 enablePlugins(JlinkPlugin)
+enablePlugins(WindowsPlugin)
 
 name := "scala-bricks"
 
