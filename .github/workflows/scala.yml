@@ -28,7 +28,7 @@ jobs:
       with:
         name: Click Em All
         path: |
-          target/**/scala-bricks-*.tgz
+          target/**/*.tgz
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
@@ -59,7 +59,7 @@ jobs:
       with:
         name: Click Em All
         path: |
-          target/**/scala-bricks-*.msi
+          target/**/*.msi
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
@@ -90,7 +90,7 @@ jobs:
       with:
         name: Click Em All
         path: |
-          target/**/scala-bricks-*.dmg
+          target/**/*.dmg
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
