@@ -27,6 +27,8 @@ libraryDependencies += "org.typelevel" %% "cats-effect" % "2.5.5"
 
 fork := true
 
+Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll")
+
 jlinkIgnoreMissingDependency := JlinkIgnore.only(
   "scalafx" -> "javafx.embed.swing",
   "scalafx" -> "javafx.scene.web",
