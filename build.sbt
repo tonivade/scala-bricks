@@ -2,7 +2,7 @@ enablePlugins(JlinkPlugin)
 
 name := "scala-bricks"
 
-version := "0.1.0-SNAPSHOT"
+version := "1.0.0"
 
 scalaVersion := "2.13.10"
 

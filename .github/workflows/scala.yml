@@ -28,7 +28,7 @@ jobs:
       with:
         name: Click Em All
         path: |
-          target/universal/scala-bricks-*.tgz 
+          target/universal/scala-bricks-*.tgz
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
@@ -36,7 +36,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/universal/scala-bricks-0.1.0-SNAPSHOT.tgz
+        asset_path: target/universal/scala-bricks-1.0.0.tgz
         asset_name: bricks-x86_64-pc-linux.tgz
         asset_content_type: application/zip
 
@@ -59,7 +59,7 @@ jobs:
       with:
         name: Click Em All
         path: |
-          target/universal/scala-bricks-*.zip
+          target/universal/scala-bricks-*.msi
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
@@ -67,8 +67,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/universal/scala-bricks-0.1.0-SNAPSHOT.zip
-        asset_name: bricks-x86_64-pc-windows.zip
+        asset_path: target/universal/scala-bricks-1.0.0.msi
+        asset_name: bricks-x86_64-pc-windows.msi
         asset_content_type: application/zip
 
   build-mac:
@@ -98,6 +98,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/universal/scala-bricks-0.1.0-SNAPSHOT.dmg
+        asset_path: target/universal/scala-bricks-1.0.0.dmg
         asset_name: bricks-x86_64-apple-darwin.dmg
         asset_content_type: application/zip
