@@ -55,13 +55,11 @@ jobs:
       run: sbt test
     - name: Run jlink
       run: sbt windows:packageBin
-    - name: List target
-      run: dir /ad /b /s target
     - uses: actions/upload-artifact@v3
       with:
         name: Click Em All
         path: |
-          target/universal/scala-bricks-*.msi
+          target/scala-bricks-*.msi
     - name: Upload release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1.0.2
@@ -69,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/windows/scala-bricks-1.0.0.msi
+        asset_path: target/scala-bricks-1.0.0.msi
         asset_name: bricks-x86_64-pc-windows.msi
         asset_content_type: application/zip
 
