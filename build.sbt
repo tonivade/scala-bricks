@@ -2,9 +2,9 @@ enablePlugins(JlinkPlugin)
 
 name := "scala-bricks"
 
-version := "1.0.0"
+version := "1.1.0"
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.12"
 
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {
@@ -14,18 +14,20 @@ lazy val osName = System.getProperty("os.name") match {
   case _ => throw new UnsupportedOperationException("Unknown platform!")
 }
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "17.0.2"
-libraryDependencies += "org.openjfx" % "javafx-controls" % "17.0.2"
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "17.0.2"
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "17.0.2"
-libraryDependencies += "org.openjfx" % "javafx-media" % "17.0.2"
+libraryDependencies += "org.openjfx" % "javafx-base" % "20.0.2"
+libraryDependencies += "org.openjfx" % "javafx-controls" % "20.0.2"
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "20.0.2"
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "20.0.2"
+libraryDependencies += "org.openjfx" % "javafx-media" % "20.0.2"
 
-libraryDependencies += "org.scalafx" %% "scalafx" % "17.0.1-R26"
+libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
-libraryDependencies += "org.typelevel" %% "cats-core" % "2.9.0"
+libraryDependencies += "org.typelevel" %% "cats-core" % "2.10.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.5.5"
 
 fork := true
+
+scalacOptions += "-deprecation"
 
 Compile / mainClass := Some("tomby.scala.bricks.ClickEmAll")
 

@@ -11,34 +11,37 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.ButtonType
 import tomby.scala.bricks.Matrix._
+import scalafx.application.JFXApp3
 
-object ClickEmAll extends JFXApp {
+object ClickEmAll extends JFXApp3 {
 
   private var matrix: Matrix = Matrix(10, 15).shuffle(ColorGenerator.randomColor)
-  private val _size = 20
-  private val _height = matrix.height * _size
-  private val _width = matrix.width * _size
-  private val _padding = _size * 2
-  
+  private val tileSize = 20
+  private val boardHeight = matrix.height * tileSize
+  private val boardWidth = matrix.width * tileSize
+
   private val pane = new Pane {
     children = paint
   }
-  
+
   pane.handleEvent(MouseEvent.MouseClicked) {
     event: MouseEvent => {
-      val _x = (event.sceneX / _size).toInt - 1
-      val _y = matrix.height - (event.sceneY / _size).toInt
+      val _x = (event.sceneX / tileSize).toInt - 1
+      val _y = matrix.height - (event.sceneY / tileSize).toInt
       matrix = run(matrix, Position(_x, _y))
       pane.children = paint
       if (matrix.gameover) if (matrix.isEmpty) win else gameover
     }
   }
-  
-  stage = new JFXApp.PrimaryStage {
-    title.value = "Click'em all!!"
-    scene = new Scene(_width + _padding, _height + _padding) {
-      fill = FxColor.White
-      root = pane
+
+  override def start(): Unit = {
+    val padding = tileSize * 2
+    stage = new JFXApp3.PrimaryStage {
+      title.value = "Click'em all!!"
+      scene = new Scene(boardWidth + padding, boardHeight + padding) {
+        fill = FxColor.White
+        root = pane
+      }
     }
   }
 
@@ -61,22 +64,22 @@ object ClickEmAll extends JFXApp {
 
   private def win: Unit =
     new Alert(AlertType.Information, "YOU WIN!").showAndWait()
-  
+
+  private def paint: Seq[Rectangle] = matrix.tiles.map(toRectangle)
+
+  private def toRectangle(tile: Tile): Rectangle =
+    new Rectangle {
+      x = tileSize + (tile.position.x * tileSize)
+      y = boardHeight - (tile.position.y * tileSize)
+      width = tileSize
+      height = tileSize
+      fill = toColor(tile)
+    }
+
   private def toColor(tile: Tile): FxColor = tile.color match {
     case Red => FxColor.Red
     case Green => FxColor.Green
     case Blue => FxColor.Blue
     case Yellow => FxColor.Yellow
   }
-
-  private def paint: Seq[Rectangle] = matrix.tiles.map(toRectangle)
-  
-  private def toRectangle(tile: Tile): Rectangle = 
-    new Rectangle {
-      x = _size + (tile.position.x * _size)
-      y = _height - (tile.position.y * _size)
-      width = _size
-      height = _size
-      fill = toColor(tile)
-    }
 }
