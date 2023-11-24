@@ -14,14 +14,14 @@ lazy val osName = System.getProperty("os.name") match {
   case _ => throw new UnsupportedOperationException("Unknown platform!")
 }
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "20.0.2"
-libraryDependencies += "org.openjfx" % "javafx-controls" % "20.0.2"
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "20.0.2"
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "20.0.2"
-libraryDependencies += "org.openjfx" % "javafx-media" % "20.0.2"
+libraryDependencies += "org.openjfx" % "javafx-base" % "21.0.1"
+libraryDependencies += "org.openjfx" % "javafx-controls" % "21.0.1"
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "21.0.1"
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "21.0.1"
+libraryDependencies += "org.openjfx" % "javafx-media" % "21.0.1"
 
-libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+libraryDependencies += "org.scalafx" %% "scalafx" % "21.0.0-R32"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.17" % "test"
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.10.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.5.5"
 
