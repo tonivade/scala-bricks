@@ -6,14 +6,6 @@ version := "1.1.0"
 
 scalaVersion := "2.13.12"
 
-// Determine OS version of JavaFX binaries
-lazy val osName = System.getProperty("os.name") match {
-  case n if n.startsWith("Linux")   => "linux"
-  case n if n.startsWith("Mac")     => "mac"
-  case n if n.startsWith("Windows") => "win"
-  case _ => throw new UnsupportedOperationException("Unknown platform!")
-}
-
 libraryDependencies += "org.openjfx" % "javafx-base" % "21.0.1"
 libraryDependencies += "org.openjfx" % "javafx-controls" % "21.0.1"
 libraryDependencies += "org.openjfx" % "javafx-fxml" % "21.0.1"
