@@ -6,11 +6,11 @@ version := "1.1.0"
 
 scalaVersion := "2.13.12"
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "21.0.1"
-libraryDependencies += "org.openjfx" % "javafx-controls" % "21.0.1"
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "21.0.1"
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "21.0.1"
-libraryDependencies += "org.openjfx" % "javafx-media" % "21.0.1"
+libraryDependencies += "org.openjfx" % "javafx-base" % "21.0.2"
+libraryDependencies += "org.openjfx" % "javafx-controls" % "21.0.2"
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "21.0.2"
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "21.0.2"
+libraryDependencies += "org.openjfx" % "javafx-media" % "21.0.2"
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "21.0.0-R32"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.17" % "test"
