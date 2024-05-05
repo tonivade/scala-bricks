@@ -4,16 +4,16 @@ name := "scala-bricks"
 
 version := "1.1.0"
 
-scalaVersion := "2.13.12"
+scalaVersion := "2.13.14"
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "21.0.2"
-libraryDependencies += "org.openjfx" % "javafx-controls" % "21.0.2"
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "21.0.2"
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "21.0.2"
-libraryDependencies += "org.openjfx" % "javafx-media" % "21.0.2"
+libraryDependencies += "org.openjfx" % "javafx-base" % "22.0.1"
+libraryDependencies += "org.openjfx" % "javafx-controls" % "22.0.1"
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "22.0.1"
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "22.0.1"
+libraryDependencies += "org.openjfx" % "javafx-media" % "22.0.1"
 
-libraryDependencies += "org.scalafx" %% "scalafx" % "21.0.0-R32"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.17" % "test"
+libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % "test"
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.10.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.5.5"
 
