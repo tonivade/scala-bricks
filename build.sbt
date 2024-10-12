@@ -2,15 +2,15 @@ enablePlugins(JlinkPlugin)
 
 name := "scala-bricks"
 
-version := "1.1.0"
+version := "1.1.1"
 
-scalaVersion := "2.13.14"
+scalaVersion := "2.13.15"
 
-libraryDependencies += "org.openjfx" % "javafx-base" % "22.0.1"
-libraryDependencies += "org.openjfx" % "javafx-controls" % "22.0.1"
-libraryDependencies += "org.openjfx" % "javafx-fxml" % "22.0.1"
-libraryDependencies += "org.openjfx" % "javafx-graphics" % "22.0.1"
-libraryDependencies += "org.openjfx" % "javafx-media" % "22.0.1"
+libraryDependencies += "org.openjfx" % "javafx-base" % "22.0.2"
+libraryDependencies += "org.openjfx" % "javafx-controls" % "22.0.2"
+libraryDependencies += "org.openjfx" % "javafx-fxml" % "22.0.2"
+libraryDependencies += "org.openjfx" % "javafx-graphics" % "22.0.2"
+libraryDependencies += "org.openjfx" % "javafx-media" % "22.0.2"
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % "test"
