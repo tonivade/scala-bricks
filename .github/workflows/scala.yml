@@ -14,12 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 21
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 21
         distribution: temurin
+        cache: sbt
     - name: Run tests
       run: sbt test
     - name: Run jlink
@@ -45,12 +46,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 21
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 21
         distribution: temurin
+        cache: sbt
     - name: Run tests
       run: sbt test
     - name: Run jlink
@@ -76,12 +78,17 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 21
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 21
         distribution: temurin
+        cache: sbt
+    - name: Set up sbt
+      uses: sbt/setup-sbt@v1
+      with:
+        sbt-runner-version: 1.10.2
     - name: Run tests
       run: sbt test
     - name: Run jlink
