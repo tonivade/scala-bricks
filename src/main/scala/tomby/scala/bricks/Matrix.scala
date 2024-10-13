@@ -98,7 +98,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
       tile <- atPosition(position)
     } yield Tile(Position(position.x, toY), tile.color)
     
-    clean(row(fromY)).addTiles(newRow)
+    cleanRow(fromY).addTiles(newRow)
   }
   
   def cleanRow(y: Int): Matrix = clean(row(y))
