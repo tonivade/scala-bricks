@@ -1,7 +1,7 @@
 package tomby.scala.bricks
 
 import scalafx.Includes._
-import scalafx.application.{JFXApp, Platform}
+import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import scalafx.scene.paint.{Color => FxColor}
 import scalafx.scene.shape.Rectangle
@@ -11,7 +11,6 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.ButtonType
 import tomby.scala.bricks.Matrix._
-import scalafx.application.JFXApp3
 
 object ClickEmAll extends JFXApp3 {
 
@@ -30,7 +29,7 @@ object ClickEmAll extends JFXApp3 {
       val y = matrix.height - (event.sceneY / tileSize).toInt
       matrix = run(matrix, Position(x, y))
       pane.children = paint
-      if (matrix.gameover) if (matrix.isEmpty) win else gameover
+      if (matrix.gameOver) if (matrix.isEmpty) win else gameOver
     }
   }
 
@@ -45,7 +44,7 @@ object ClickEmAll extends JFXApp3 {
     }
   }
 
-  private def gameover: Unit = {
+  private def gameOver: Unit = {
     val result = new Alert(AlertType.Confirmation, "GAME OVER!") {
       initOwner(stage)
       headerText = "GAME OVER!"

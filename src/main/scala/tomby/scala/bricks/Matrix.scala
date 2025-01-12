@@ -123,7 +123,7 @@ case class Matrix(width: Int, height: Int, tiles: Seq[Tile] = Seq()) {
     
   def isEmpty: Boolean = bricks.isEmpty
   
-  def gameover: Boolean = bricks.values.flatMap(search).isEmpty
+  def gameOver: Boolean = bricks.values.flatMap(search).isEmpty
     
   def matrix: Seq[Position] = 
     for {
