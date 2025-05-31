@@ -28,10 +28,10 @@ jobs:
     - name: Run tests
       run: sbt test
     - name: Run jlink
-      run: sbt universal:packageZipTarball
+      run: sbt Universal / packageZipTarball
     - uses: actions/upload-artifact@v4
       with:
-        name: Click Em All
+        name: Click Em All Linus
         path: |
           target/**/*.tgz
     - name: Upload release
@@ -60,10 +60,10 @@ jobs:
     - name: Run tests
       run: sbt test
     - name: Run jlink
-      run: sbt windows:packageBin
+      run: sbt Windows / packageBin
     - uses: actions/upload-artifact@v4
       with:
-        name: Click Em All
+        name: Click Em All Windows
         path: |
           target/**/*.msi
     - name: Upload release
@@ -96,10 +96,10 @@ jobs:
     - name: Run tests
       run: sbt test
     - name: Run jlink
-      run: sbt universal:packageOsxDmg
+      run: sbt Universal / packageOsxDmg
     - uses: actions/upload-artifact@v4
       with:
-        name: Click Em All
+        name: Click Em All MacOS
         path: |
           target/**/*.dmg
     - name: Upload release
