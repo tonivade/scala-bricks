@@ -6,6 +6,6 @@ Silly point and click game.
 
 Download:
 
-- [linux](https://github.com/tonivade/scala-bricks/releases/download/1.0/bricks-x86_64-pc-linux.tgz)
-- [windows](https://github.com/tonivade/scala-bricks/releases/download/1.0/bricks-x86_64-pc-windows.msi)
-- [mac](https://github.com/tonivade/scala-bricks/releases/download/1.0/bricks-x86_64-apple-darwin.dmg)
+- [linux](https://github.com/tonivade/scala-bricks/releases/download/1.2/scala-bricks-1.2.0.tgz)
+- [windows](https://github.com/tonivade/scala-bricks/releases/download/1.2/scala-bricks.msi)
+- [mac](https://github.com/tonivade/scala-bricks/releases/download/1.2/scala-bricks-1.2.0.dmg)
